@@ -25,7 +25,7 @@ public class World {
             }
         }
     }
-    
+
     public TETile[][] getTiles() {
         return tiles;
     }
@@ -35,6 +35,5 @@ public class World {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(newWorld.getTiles());
-
     }
 }
