@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Comparator;
-import core.Main;
 
 public class World {
     private Random random;
     private List<Room> rooms;
-    TERenderer ter = new TERenderer();
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
     public static final int WINDOW_WIDTH = 80;
@@ -62,7 +60,6 @@ public class World {
         }
     }
 
-
     private void createRooms() {
         int areaCovered = 0;
         int totalArea = WIDTH * HEIGHT;
@@ -70,18 +67,17 @@ public class World {
 
         while (areaCovered < targetArea) {
             if (createRandomRoom()) {
-                areaCovered += calculateRoomArea(); // Implement this method to calculate the area of the last created room
+                areaCovered += calculateRoomArea();
             }
         }
     }
 
     private boolean createRandomRoom() {
         // Randomly determine room dimensions and position
-        int roomWidth = random.nextInt(10) + 4; // Room width between 3 and 12
-        int roomHeight = random.nextInt(10) + 4; // Room height between 3 and 8
+        int roomWidth = random.nextInt(10) + 4;
+        int roomHeight = random.nextInt(10) + 4;
         int roomStartX = random.nextInt(WIDTH - roomWidth); // X-coordinate of top-left corner
         int roomStartY = random.nextInt(HEIGHT - roomHeight); // Y-coordinate of top-left corner
-
 
         if (!isSpaceFree(roomStartX, roomStartY, roomWidth, roomHeight)) {
             return false;
@@ -194,19 +190,11 @@ public class World {
             this.y = y;
         }
 
-        // You might want to add methods here for any calculations you need to do with points.
-        // For example, you could add a method to calculate the distance between two points.
-
-        public double distanceTo(Point other) {
-            return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
-        }
-
         @Override
         public String toString() {
             return String.format("Point(x=%d, y=%d)", x, y);
         }
     }
-
 
     private int calculateRoomArea() {
         return lastRoomWidth * lastRoomHeight;
@@ -249,7 +237,7 @@ public class World {
     }
 
     public static void main(String[] args) {
-        World newWorld = new World(324234324);
+        World newWorld = new World(32423424);
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(newWorld.getTiles());
