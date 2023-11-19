@@ -16,7 +16,7 @@ public class World {
     public static final int HEIGHT = 40;
     public static final int WINDOW_WIDTH = 80;
     public static final int WINDOW_HEIGHT = 45;
-    public TETile[][] tiles;
+    private TETile[][] tiles;
     private int lastRoomWidth = 0;
     private int lastRoomHeight = 0;
     private Map<Room, Room> parent; // To track the parent of each room
@@ -76,8 +76,10 @@ public class World {
         // Randomly determine room dimensions and position
         int roomWidth = random.nextInt(10) + 4;
         int roomHeight = random.nextInt(10) + 4;
-        int roomStartX = random.nextInt(WIDTH - roomWidth); // X-coordinate of top-left corner
-        int roomStartY = random.nextInt(HEIGHT - roomHeight); // Y-coordinate of top-left corner
+        int roomStartX = random.nextInt(WIDTH - roomWidth);
+        // X-coordinate of top-left corner
+        int roomStartY = random.nextInt(HEIGHT - roomHeight);
+        // Y-coordinate of top-left corner
 
         if (!isSpaceFree(roomStartX, roomStartY, roomWidth, roomHeight)) {
             return false;
@@ -182,8 +184,8 @@ public class World {
     }
 
     public class Point {
-        public final int x;
-        public final int y;
+        private final int x;
+        private final int y;
 
         public Point(int x, int y) {
             this.x = x;
