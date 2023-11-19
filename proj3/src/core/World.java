@@ -11,7 +11,7 @@ import java.util.Comparator;
 import core.Main;
 
 public class World {
-    public static Random random = new Random();
+    private Random random;
     private List<Room> rooms;
     TERenderer ter = new TERenderer();
     public static final int WIDTH = 80;
@@ -32,12 +32,10 @@ public class World {
             this.width = width;
             this.height = height;
         }
-
-        // You can add methods here to help with creating hallways later,
-        // such as a method to get the center of the room, etc.
     }
 
-    public World() {
+    public World(long seed) {
+        random = new Random(seed);
         tiles = new TETile[WIDTH][HEIGHT];
         rooms = new ArrayList<>();
         parent = new HashMap<>();
@@ -251,7 +249,7 @@ public class World {
     }
 
     public static void main(String[] args) {
-        World newWorld = new World();
+        World newWorld = new World(324234324);
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(newWorld.getTiles());

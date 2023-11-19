@@ -18,11 +18,30 @@ public class WorldGenTests {
 
     @Test
     public void basicInteractivityTest() {
+        TETile[][] tiles = AutograderBuddy.getWorldFromInput("n123swasdwasd");
+
+        TERenderer ter = new TERenderer();
+        ter.initialize(tiles.length, tiles[0].length);
+        ter.renderFrame(tiles);
+        StdDraw.pause(5000);
         // TODO: write a test that uses an input like "n123swasdwasd"
     }
 
     @Test
     public void basicSaveTest() {
+        TETile[][] tiles = AutograderBuddy.getWorldFromInput("n123swasd:q");
+
+        TERenderer ter = new TERenderer();
+        ter.initialize(tiles.length, tiles[0].length);
+        ter.renderFrame(tiles);
+        StdDraw.pause(5000);
+
+        TETile[][] hi = AutograderBuddy.getWorldFromInput("lwasd");
+
+        TERenderer no = new TERenderer();
+        no.initialize(hi.length, hi[0].length);
+        no.renderFrame(hi);
+        StdDraw.pause(5000);
         // TODO: write a test that calls getWorldFromInput twice, with "n123swasd:q" and with "lwasd"
     }
 }
