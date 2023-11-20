@@ -111,7 +111,7 @@ public class World {
         parent.put(room, room);
         return true;
     }
-
+    
     private void connectRooms() {
         // Sort the rooms by their x-coordinate (or y-coordinate) to make it simple
         rooms.sort(Comparator.comparingInt(r -> r.x));
