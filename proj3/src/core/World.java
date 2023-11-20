@@ -159,6 +159,10 @@ public class World {
     }
 
     // Call this method after creating all rooms and hallways
+
+    /**
+     * @source chatgpt.com
+     */
     private void addWallsAroundHallways() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
@@ -212,7 +216,9 @@ public class World {
         }
         return true;
     }
-
+    /**
+     * @source chatgpt.com
+     */
     private void addWalls(int startX, int startY, int width, int height) {
         // Top and bottom walls
         for (int x = startX; x < startX + width; x++) {
@@ -239,10 +245,9 @@ public class World {
     }
 
     public static void main(String[] args) {
-        World newWorld = new World(32423424);
+        World newWorld = new World(32324324);
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(newWorld.getTiles());
     }
 }
-
