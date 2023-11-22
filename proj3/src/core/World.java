@@ -1,7 +1,10 @@
 package core;
+import edu.princeton.cs.algs4.StdDraw;
 import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
+
+import java.awt.*;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
@@ -242,6 +245,22 @@ public class World {
 
     public TETile[][] getTiles() {
         return tiles;
+    }
+
+    public static void displayHUD (World currentWorld, int posX, int posY) {
+        String currentTile = currentWorld.tiles[posX][posY].description();
+        if (currentTile == null) {
+            StdDraw.setFont(new Font("Monaco", Font.PLAIN, 14));
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.textRight(World.WIDTH - 4, World.HEIGHT - 3, "Nothing");
+            StdDraw.show();
+        }
+        else {
+            StdDraw.setFont(new Font("Monaco", Font.PLAIN, 14));
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.textRight(World.WIDTH - 4, World.HEIGHT - 3, currentTile);
+            StdDraw.show();
+        }
     }
 
     public static void main(String[] args) {
