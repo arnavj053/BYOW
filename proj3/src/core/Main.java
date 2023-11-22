@@ -1,9 +1,12 @@
 package core;
 
 
-public class Main {
-    public void main(String[] args) {
+import java.awt.*;
 
+public class Main {
+    public static void main(String[] args) {
+        MainMenu menu = new MainMenu();
+        menu.showMenu();
     }
 }
 
