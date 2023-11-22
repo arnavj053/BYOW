@@ -24,6 +24,10 @@ public class World {
     private int lastRoomHeight = 0;
     private Map<Room, Room> parent; // To track the parent of each room
     private static final double DESIRED_COVERAGE = 0.25; // 25% of the grid
+
+    private int avatarPosX;
+    private int avatarPosY;
+    private TETile tileAvatar;
     private class Room {
         int x, y, width, height;
 
@@ -44,6 +48,10 @@ public class World {
         createRooms();
         connectRooms();
         addWallsAroundHallways();
+        this.tileAvatar = Tileset.AVATAR;
+        this.avatarPosX = validInitialAvatarPosition().x;
+        this.avatarPosY = validInitialAvatarPosition().y;
+        tiles[avatarPosX][avatarPosY] = tileAvatar;
     }
 
     // Union-find methods
@@ -248,19 +256,46 @@ public class World {
     }
 
     public static void displayHUD (World currentWorld, int posX, int posY) {
-        String currentTile = currentWorld.tiles[posX][posY].description();
-        if (currentTile == null) {
-            StdDraw.setFont(new Font("Monaco", Font.PLAIN, 14));
-            StdDraw.setPenColor(Color.WHITE);
-            StdDraw.textRight(World.WIDTH - 4, World.HEIGHT - 3, "Nothing");
-            StdDraw.show();
+        if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
+            String currentTile = currentWorld.tiles[posX][posY].description();
+            if (currentTile == null) {
+                StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
+                StdDraw.setPenColor(Color.WHITE);
+                StdDraw.textLeft( 2, World.HEIGHT - 2, "Nothing");
+                StdDraw.show();
+            }
+            else {
+                StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
+                StdDraw.setPenColor(Color.WHITE);
+                StdDraw.textLeft( 2, World.HEIGHT - 2, "Tile: " + currentTile);
+                StdDraw.show();
+            }
         }
-        else {
-            StdDraw.setFont(new Font("Monaco", Font.PLAIN, 14));
-            StdDraw.setPenColor(Color.WHITE);
-            StdDraw.textRight(World.WIDTH - 4, World.HEIGHT - 3, currentTile);
-            StdDraw.show();
+    }
+    public void tryMove(int deltaX, int deltaY) {
+        if (canMove(deltaX, deltaY)) {
+            tiles[avatarPosX][avatarPosY] = Tileset.FLOOR;
+            avatarPosX += deltaX;
+            avatarPosY += deltaY;
+            tiles[avatarPosX][avatarPosY] = tileAvatar;
         }
+    }
+
+    private boolean canMove(int deltaX, int deltaY) {
+        int newX = avatarPosX + deltaX;
+        int newY = avatarPosY + deltaY;
+        return newX >= 0 && newX < WIDTH && newY >= 0 && newY < HEIGHT && tiles[newX][newY].description().equals("floor");
+    }
+
+    private Point validInitialAvatarPosition() {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                if (tiles[x][y].description().equals("floor")) {
+                    return new Point(x,y);
+                }
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {

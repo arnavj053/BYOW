@@ -6,6 +6,8 @@ import tileengine.TERenderer;
 
 import java.awt.*;
 
+import static edu.princeton.cs.algs4.StdDraw.*;
+
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
@@ -23,6 +25,18 @@ public class Main {
                 int positionX = (int) StdDraw.mouseX();
                 int positionY = (int) StdDraw.mouseY();
                 World.displayHUD(newWorld, positionX, positionY);
+                if (hasNextKeyTyped()) {
+                    char characterMovement = nextKeyTyped();
+                    if (characterMovement == 'W' || characterMovement == 'w') {
+                        newWorld.tryMove(0,1);
+                    } else if (characterMovement == 'A' || characterMovement == 'a') {
+                        newWorld.tryMove(-1, 0);
+                    } else if (characterMovement == 'S' || characterMovement == 's') {
+                        newWorld.tryMove(0, -1);
+                    } else if (characterMovement == 'D' || characterMovement == 'd') {
+                        newWorld.tryMove(1,0);
+                    }
+                }
             }
         }
         if (userSelection == 2) {
