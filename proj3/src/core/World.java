@@ -4,7 +4,6 @@ import net.sf.saxon.expr.Component;
 import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
-
 import java.awt.*;
 import java.util.Random;
 import java.util.ArrayList;
@@ -174,7 +173,7 @@ public class World {
     // Call this method after creating all rooms and hallways
 
     /**
-     * @source chatgpt.com
+     * @source chat.openai.com
      */
     private void addWallsAroundHallways() {
         for (int x = 0; x < WIDTH; x++) {
@@ -230,7 +229,7 @@ public class World {
         return true;
     }
     /**
-     * @source chatgpt.com
+     * @source chat.openai.com
      */
     private void addWalls(int startX, int startY, int width, int height) {
         // Top and bottom walls
@@ -257,7 +256,7 @@ public class World {
         return tiles;
     }
 
-    public void displayHUD(World currentWorld, int posX, int posY) {
+    public static void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
             String currentTile = currentWorld.tiles[posX][posY].description();
             if (currentTile == null) {
