@@ -300,7 +300,6 @@ public class World {
         return null;
     }
 
-
     public static void main(String[] args) {
         World newWorld = new World(32324324);
         TERenderer ter = new TERenderer();
