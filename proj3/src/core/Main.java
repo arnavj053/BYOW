@@ -26,7 +26,7 @@ public class Main {
                 ter.drawTiles(newWorld.getTiles());
                 int positionX = (int) StdDraw.mouseX();
                 int positionY = (int) StdDraw.mouseY();
-                World.displayHUD(newWorld, positionX, positionY);
+                newWorld.displayHUD(newWorld, positionX, positionY);
                 if (hasNextKeyTyped()) {
                     char characterMovement = nextKeyTyped();
                     if (characterMovement == 'W' || characterMovement == 'w') {
@@ -45,19 +45,7 @@ public class Main {
             //use save and load feature to load that specific game
         }
         if (userSelection == 3) {
-            boolean quitGameStart = false;
-            while (true) {
-                if (StdDraw.hasNextKeyTyped()) {
-                    char firstKey = StdDraw.nextKeyTyped();
-                    if (firstKey == ':') {
-                        quitGameStart = true;
-                    } else if ((firstKey == 'Q' || firstKey == 'q') && quitGameStart) {
-                        System.exit(0);
-                    } else if (firstKey == 'Q' || firstKey == 'q') {
-                        System.exit(0);
-                    }
-                }
-            }
+
         }
     }
 }
