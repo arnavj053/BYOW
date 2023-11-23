@@ -1,5 +1,6 @@
 package core;
 import edu.princeton.cs.algs4.StdDraw;
+import net.sf.saxon.expr.Component;
 import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
@@ -24,10 +25,11 @@ public class World {
     private int lastRoomHeight = 0;
     private Map<Room, Room> parent; // To track the parent of each room
     private static final double DESIRED_COVERAGE = 0.25; // 25% of the grid
-
     private int avatarPosX;
     private int avatarPosY;
     private TETile tileAvatar;
+
+    MainMenu nameAvatar = new MainMenu();
     private class Room {
         int x, y, width, height;
 
@@ -255,7 +257,7 @@ public class World {
         return tiles;
     }
 
-    public static void displayHUD (World currentWorld, int posX, int posY) {
+    public void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
             String currentTile = currentWorld.tiles[posX][posY].description();
             if (currentTile == null) {
@@ -297,6 +299,7 @@ public class World {
         }
         return null;
     }
+
 
     public static void main(String[] args) {
         World newWorld = new World(32324324);

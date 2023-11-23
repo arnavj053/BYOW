@@ -37,11 +37,15 @@ public class MainMenu {
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 2.5, "New Game (N)");
             StdDraw.text(WIDTH_MAIN/ 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 5.5, "Quit (Q)");
+            StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 10.5, "Create Avatar Name (C)");
 
             StdDraw.show();
 
             if (hasNextKeyTyped()) {
                 char gameStatus = nextKeyTyped();
+                if (gameStatus == 'Q' || gameStatus == 'q') {
+                    System.exit(0);
+                }
                 if (gameStatus == ':') {
                     quitGameStart = true;
                 }
@@ -51,8 +55,9 @@ public class MainMenu {
                     }else if (gameStatus == 'L' || gameStatus == 'l') {
                         return 2;
                     }
-                } else if (gameStatus == 'Q' || gameStatus == 'q') {
-                    System.exit(0);
+                    else if (gameStatus == 'C' || gameStatus == 'c') {
+                        return 3;
+                    }
                 }
                 if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {
                         System.exit(0);
@@ -84,5 +89,29 @@ public class MainMenu {
             }
         }
         return Long.parseLong(input); // Convert string input to long
+    }
+    public String avatarName() {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.setFont(new Font("Times new Roman", Font.PLAIN, 20));
+        StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press D to finish):");
+        StdDraw.show();
+        String input = "";
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                if (c == 'D' || c == 'd') {
+                    break; // Finish avatar name input
+                } else {
+                    input += c; // Append character to avatar name string
+                    // Redraw the prompt with the current avatar name input
+                    StdDraw.clear(Color.BLACK);
+                    StdDraw.setPenColor(Color.WHITE);
+                    StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press D to finish): " + input);
+                    StdDraw.show();
+                }
+            }
+        }
+        return input; // Return avatar name
     }
 }
