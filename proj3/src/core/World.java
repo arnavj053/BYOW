@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.StdDraw;
 import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
-
 import java.awt.*;
 import java.util.Random;
 import java.util.ArrayList;
@@ -172,7 +171,7 @@ public class World {
     // Call this method after creating all rooms and hallways
 
     /**
-     * @source chatgpt.com
+     * @source chat.openai.com
      */
     private void addWallsAroundHallways() {
         for (int x = 0; x < WIDTH; x++) {
@@ -228,7 +227,7 @@ public class World {
         return true;
     }
     /**
-     * @source chatgpt.com
+     * @source chat.openai.com
      */
     private void addWalls(int startX, int startY, int width, int height) {
         // Top and bottom walls
