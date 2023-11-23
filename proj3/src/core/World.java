@@ -197,7 +197,7 @@ public class World {
                 }
             }
         }
-    }
+    };
     public class Point {
         private final int x;
         private final int y;
@@ -255,7 +255,7 @@ public class World {
         return tiles;
     }
 
-    public static void displayHUD(World currentWorld, int posX, int posY) {
+    public void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
             String currentTile = currentWorld.tiles[posX][posY].description();
             if (currentTile == null) {
@@ -271,6 +271,12 @@ public class World {
                 StdDraw.show();
             }
         }
+    }
+    public void displayHUD(World currentWorld, String avatarName) {
+        StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.textLeft(World.WIDTH - 15, World.HEIGHT - 2, "Name: " + avatarName);
+        StdDraw.show();
     }
     public void tryMove(int deltaX, int deltaY) {
         if (canMove(deltaX, deltaY)) {

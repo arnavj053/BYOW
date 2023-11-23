@@ -97,25 +97,24 @@ public class MainMenu {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.setFont(new Font("Times new Roman", Font.PLAIN, 20));
-        StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press D to finish):");
+        StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press 1 to finish):");
         StdDraw.show();
         String input = "";
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
-                if (c == 'D' || c == 'd') {
-                    break; // Finish avatar name input
+                if (c == '1' || c == '1') {
+                    break;
                 } else {
-                    input += c; // Append character to avatar name string
-                    // Redraw the prompt with the current avatar name input
+                    input += c;
                     StdDraw.clear(Color.BLACK);
                     StdDraw.setPenColor(Color.WHITE);
-                    StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press D to finish): " + input);
+                    StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press 1 to finish): " + input);
                     StdDraw.show();
                 }
             }
         }
-        return input; // Return avatar name
+        return input;
     }
 
     public void saveSeed(long seed) {
