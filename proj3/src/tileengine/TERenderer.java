@@ -45,6 +45,17 @@ public class TERenderer {
     }
 
     /**
+     * Like renderFrame, but does not clear the screen or show the tiles
+     */
+    public void drawTiles(TETile[][] world) {
+        for (int x = 0; x < world.length; x += 1) {
+            for (int y = 0; y < world[x].length; y += 1) {
+                world[x][y].draw(x + xOffset, y + yOffset);
+            }
+        }
+    }
+
+    /**
      * Initializes StdDraw parameters and launches the StdDraw window. w and h are the
      * width and height of the world in number of tiles. If the TETile[][] array that you
      * pass to renderFrame is smaller than this, then extra blank space will be left

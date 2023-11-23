@@ -21,7 +21,8 @@ public class Main {
             ter.initialize(WIDTH, HEIGHT);
             ter.renderFrame(newWorld.getTiles());
             while (true) {
-                ter.renderFrame(newWorld.getTiles());
+                StdDraw.clear(Color.BLACK);
+                ter.drawTiles(newWorld.getTiles());
                 int positionX = (int) StdDraw.mouseX();
                 int positionY = (int) StdDraw.mouseY();
                 World.displayHUD(newWorld, positionX, positionY);
