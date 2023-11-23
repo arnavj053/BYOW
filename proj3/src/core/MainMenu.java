@@ -3,7 +3,8 @@ import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TETile;
 import tileengine.TERenderer;
 import tileengine.Tileset;
-
+import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.*;
 import java.util.*;
 import static edu.princeton.cs.algs4.StdDraw.*;
@@ -88,7 +89,9 @@ public class MainMenu {
                 }
             }
         }
-        return Long.parseLong(input); // Convert string input to long
+        long inputnumber = Long.parseLong(input); // Convert string input to long
+        saveSeed(inputnumber);
+        return inputnumber;
     }
     public String avatarName() {
         StdDraw.clear(Color.BLACK);
@@ -113,5 +116,13 @@ public class MainMenu {
             }
         }
         return input; // Return avatar name
+    }
+
+    public void saveSeed(long seed) {
+        try (FileWriter writer = new FileWriter("lastSeed.txt")) {
+            writer.write(Long.toString(seed));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

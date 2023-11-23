@@ -256,7 +256,7 @@ public class World {
         return tiles;
     }
 
-    public void displayHUD(World currentWorld, int posX, int posY) {
+    public static void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
             String currentTile = currentWorld.tiles[posX][posY].description();
             if (currentTile == null) {
