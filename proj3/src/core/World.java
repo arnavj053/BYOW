@@ -259,12 +259,14 @@ public class World {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
             String currentTile = currentWorld.tiles[posX][posY].description();
             if (currentTile == null) {
+                StdDraw.enableDoubleBuffering(); // prevents flickering and makes animations smoother
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Nothing");
                 StdDraw.show();
             }
             else {
+                StdDraw.enableDoubleBuffering(); // prevents flickering and makes animations smoother
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Tile: " + currentTile);
