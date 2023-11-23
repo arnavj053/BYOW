@@ -48,14 +48,13 @@ public class Main {
             boolean quitGameStart = false;
             while (true) {
                 if (StdDraw.hasNextKeyTyped()) {
-                    char key = StdDraw.nextKeyTyped();
-
-                    if (key == ':') {
-                        quitGameStart = true; // Set flag if ':' is pressed
-                    } else if ((key == 'Q' || key == 'q') && quitGameStart) {
-                        System.exit(0); // Exit if ':' was pressed before 'Q' or 'q'
-                    } else if (key == 'Q' || key == 'q') {
-                        System.exit(0); // Also exit if 'Q' or 'q' is pressed by itself
+                    char firstKey = StdDraw.nextKeyTyped();
+                    if (firstKey == ':') {
+                        quitGameStart = true;
+                    } else if ((firstKey == 'Q' || firstKey == 'q') && quitGameStart) {
+                        System.exit(0);
+                    } else if (firstKey == 'Q' || firstKey == 'q') {
+                        System.exit(0);
                     }
                 }
             }
