@@ -25,6 +25,7 @@ public class MainMenu {
     }
 
     public int showMenu() {
+        boolean quitGameStart = false;
         while (true) {
             StdDraw.clear(StdDraw.BLACK);
 
@@ -41,16 +42,25 @@ public class MainMenu {
 
             if (hasNextKeyTyped()) {
                 char gameStatus = nextKeyTyped();
-                if (gameStatus == 'N' || gameStatus == 'n') {
-                    return 1;
-                } else if (gameStatus == 'L' || gameStatus == 'l') {
-                    return 2;
+                if (gameStatus == ':') {
+                    quitGameStart = true;
+                }
+                if (!quitGameStart) {
+                    if (gameStatus == 'N' || gameStatus == 'n') {
+                        return 1;
+                    }else if (gameStatus == 'L' || gameStatus == 'l') {
+                        return 2;
+                    }
                 } else if (gameStatus == 'Q' || gameStatus == 'q') {
-                    return 3;
+                    System.exit(0);
+                }
+                if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {
+                        System.exit(0);
+                }
                 }
             }
         }
-    }
+
     public long enterSeed() {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
