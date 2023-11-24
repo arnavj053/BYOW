@@ -5,6 +5,8 @@ import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,8 @@ public class World {
     private static final double DESIRED_COVERAGE = 0.25; // 25% of the grid
     private int avatarPosX;
     private int avatarPosY;
+
+    private String name;
     private TETile tileAvatar;
 
     MainMenu nameAvatar = new MainMenu();
@@ -275,7 +279,7 @@ public class World {
     public void displayHUD(World currentWorld, String avatarName) {
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
         StdDraw.setPenColor(Color.WHITE);
-        StdDraw.textLeft(World.WIDTH - 15, World.HEIGHT - 2, "Name: " + avatarName);
+        StdDraw.textLeft(World.WIDTH - 10, World.HEIGHT - 2, "Name: " + avatarName);
         StdDraw.show();
     }
     public void tryMove(int deltaX, int deltaY) {
@@ -303,7 +307,23 @@ public class World {
         }
         return null;
     }
-
+    public void savedAvatarPosition(int x, int y) {
+        this.avatarPosX = x;
+        this.avatarPosY = y;
+    }
+    public void savedAvatarName(String name) {
+        this.name = name;
+    }
+    public void saveGameState(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write(+ "\n");
+            writer.write(avatarPosX + "\n");
+            writer.write(avatarPosY + "\n");
+            writer.write(name + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
         World newWorld = new World(32324324);
         TERenderer ter = new TERenderer();

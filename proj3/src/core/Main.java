@@ -49,13 +49,22 @@ public class Main {
                     }
                 }
             } else if (userSelection == 2) {
-                long savedSeed = loadSeed();
+                Object[] gameState = loadGame();
+                long savedSeed = (long) gameState[0];
+                int savedAvatarX = (int) gameState[1];
+                int savedAvatarY = (int) gameState[2];
+                String savedAvatarName = (String) gameState[3];
                 if (savedSeed != -1) {
                     World newWorld = new World(savedSeed);
+                    newWorld.savedAvatarPosition(savedAvatarX,savedAvatarY);
+                    newWorld.savedAvatarName(savedAvatarName);
                     TERenderer ter = new TERenderer();
                     ter.initialize(WIDTH, HEIGHT);
                     ter.renderFrame(newWorld.getTiles());
                     while (true) {
+                        if (avatarName != null) {
+                            newWorld.displayHUD(newWorld, avatarName);
+                        }
                         StdDraw.clear(Color.BLACK);
                         ter.drawTiles(newWorld.getTiles());
                         int positionX = (int) StdDraw.mouseX();
@@ -73,26 +82,31 @@ public class Main {
                                 newWorld.tryMove(1, 0);
                             }
                         }
+                        saveGame(newWorld, "gameState.txt");
                     }
                 }
             } else if (userSelection == 3) {
                 avatarName = menu.avatarName();
             }
         }
-
     }
 
-    public static long loadSeed() {
-        File file = new File("lastSeed.txt");
+    public static Object[] loadGame() {
+        File file = new File("gameState.txt");
         if (file.exists()) {
             try (Scanner scanner = new Scanner(file)) {
-                if (scanner.hasNextLong()) {
-                    return scanner.nextLong();
-                }
+                long seed = scanner.hasNextLong() ? scanner.nextLong() : -1;
+                int avatarX = scanner.hasNextInt() ? scanner.nextInt() : -1;
+                int avatarY = scanner.hasNextInt() ? scanner.nextInt() : -1;
+                String avatarName = scanner.hasNext() ? scanner.next() : null; // Null if name not present
+                return new Object[]{seed, avatarX, avatarY, avatarName};
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        return -1; // Return a default or error value if no seed is found
+        return new Object[]{-1,-1,-1, null}; // Return a default or error value if no seed is found
+    }
+    public static void saveGame(World world, String filename) {
+        world.saveGameState(filename);
     }
 }
