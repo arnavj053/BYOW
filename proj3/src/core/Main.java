@@ -2,12 +2,12 @@ package core;
 
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
-
+import java.io.FileWriter;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
+import java.io.IOException;
 import static edu.princeton.cs.algs4.StdDraw.*;
 
 public class Main {
@@ -18,95 +18,108 @@ public class Main {
         String avatarName = null;
         MainMenu menu = new MainMenu();
         boolean mainMenuRunning = true;
+
         while (mainMenuRunning) {
             int userSelection = menu.showMenu();
-            if (userSelection == 1) {
+
+            if (userSelection == 1) { // New Game
                 long seed = menu.enterSeed();
+                avatarName = menu.avatarName(); // Get avatar name for new game
                 World newWorld = new World(seed);
-                TERenderer ter = new TERenderer();
-                ter.initialize(WIDTH, HEIGHT);
-                ter.renderFrame(newWorld.getTiles());
-                while (true) {
-                    if (avatarName != null) {
-                        newWorld.displayHUD(newWorld, avatarName);
-                    }
-                    StdDraw.clear(Color.BLACK);
-                    ter.drawTiles(newWorld.getTiles());
-                    int positionX = (int) StdDraw.mouseX();
-                    int positionY = (int) StdDraw.mouseY();
-                    newWorld.displayHUD(newWorld, positionX, positionY);
-                    if (hasNextKeyTyped()) {
-                        char characterMovement = nextKeyTyped();
-                        if (characterMovement == 'W' || characterMovement == 'w') {
-                            newWorld.tryMove(0, 1);
-                        } else if (characterMovement == 'A' || characterMovement == 'a') {
-                            newWorld.tryMove(-1, 0);
-                        } else if (characterMovement == 'S' || characterMovement == 's') {
-                            newWorld.tryMove(0, -1);
-                        } else if (characterMovement == 'D' || characterMovement == 'd') {
-                            newWorld.tryMove(1, 0);
-                        }
-                    }
-                }
-            } else if (userSelection == 2) {
-                Object[] gameState = loadGame();
-                long savedSeed = (long) gameState[0];
-                int savedAvatarX = (int) gameState[1];
-                int savedAvatarY = (int) gameState[2];
-                String savedAvatarName = (String) gameState[3];
+                runGameLoop(newWorld, avatarName);
+            } else if (userSelection == 2) { // Load Game
+                long savedSeed = loadSeed();
+                avatarName = loadAvatarName(); // Load avatar name for saved game
+
                 if (savedSeed != -1) {
                     World newWorld = new World(savedSeed);
-                    newWorld.savedAvatarPosition(savedAvatarX,savedAvatarY);
-                    newWorld.savedAvatarName(savedAvatarName);
-                    TERenderer ter = new TERenderer();
-                    ter.initialize(WIDTH, HEIGHT);
-                    ter.renderFrame(newWorld.getTiles());
-                    while (true) {
-                        if (avatarName != null) {
-                            newWorld.displayHUD(newWorld, avatarName);
-                        }
-                        StdDraw.clear(Color.BLACK);
-                        ter.drawTiles(newWorld.getTiles());
-                        int positionX = (int) StdDraw.mouseX();
-                        int positionY = (int) StdDraw.mouseY();
-                        newWorld.displayHUD(newWorld, positionX, positionY);
-                        if (hasNextKeyTyped()) {
-                            char characterMovement = nextKeyTyped();
-                            if (characterMovement == 'W' || characterMovement == 'w') {
-                                newWorld.tryMove(0, 1);
-                            } else if (characterMovement == 'A' || characterMovement == 'a') {
-                                newWorld.tryMove(-1, 0);
-                            } else if (characterMovement == 'S' || characterMovement == 's') {
-                                newWorld.tryMove(0, -1);
-                            } else if (characterMovement == 'D' || characterMovement == 'd') {
-                                newWorld.tryMove(1, 0);
-                            }
-                        }
-                        saveGame(newWorld, "gameState.txt");
-                    }
+                    runGameLoop(newWorld, avatarName);
                 }
             } else if (userSelection == 3) {
-                avatarName = menu.avatarName();
+                // Exit or other options
+                mainMenuRunning = false;
             }
         }
     }
 
-    public static Object[] loadGame() {
-        File file = new File("gameState.txt");
+    private static void runGameLoop(World world, String avatarName) {
+        saveAvatarName(avatarName);
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(world.getTiles());
+
+        while (true) {
+            if (avatarName != null) {
+                world.displayHUD(world, avatarName);
+            }
+            StdDraw.clear(Color.BLACK);
+            ter.drawTiles(world.getTiles());
+            int positionX = (int) StdDraw.mouseX();
+            int positionY = (int) StdDraw.mouseY();
+            world.displayHUD(world, positionX, positionY);
+
+            if (StdDraw.hasNextKeyTyped()) {
+                char characterMovement = StdDraw.nextKeyTyped();
+                handleMovement(world, characterMovement);
+            }
+        }
+    }
+
+    private static void handleMovement(World world, char movement) {
+        switch (Character.toLowerCase(movement)) {
+            case 'w':
+                world.tryMove(0, 1);
+                break;
+            case 'a':
+                world.tryMove(-1, 0);
+                break;
+            case 's':
+                world.tryMove(0, -1);
+                break;
+            case 'd':
+                world.tryMove(1, 0);
+                break;
+            // Handle other keys if needed
+        }
+    }
+
+    public static long loadSeed() {
+        File file = new File("lastSeed.txt");
         if (file.exists()) {
             try (Scanner scanner = new Scanner(file)) {
-                long seed = scanner.hasNextLong() ? scanner.nextLong() : -1;
-                int avatarX = scanner.hasNextInt() ? scanner.nextInt() : -1;
-                int avatarY = scanner.hasNextInt() ? scanner.nextInt() : -1;
-                String avatarName = scanner.hasNext() ? scanner.next() : null; // Null if name not present
-                return new Object[]{seed, avatarX, avatarY, avatarName};
+                if (scanner.hasNextLong()) {
+                    return scanner.nextLong();
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        return new Object[]{-1,-1,-1, null}; // Return a default or error value if no seed is found
+        return -1; // Return a default or error value if no seed is found
     }
-    public static void saveGame(World world, String filename) {
-        world.saveGameState(filename);
+    private static String loadAvatarName() {
+        File file = new File("avatar_name.txt");
+        if (!file.exists()) {
+            System.out.println("Avatar name file not found.");
+            return null;
+        }
+        try (Scanner scanner = new Scanner(file)) {
+            if (scanner.hasNextLine()) {
+                String name = scanner.nextLine();
+                System.out.println("Loaded Avatar Name: " + name);
+                return name;
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Error reading avatar name file.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static void saveAvatarName(String avatarName) {
+        try (FileWriter writer = new FileWriter("avatar_name.txt")) {
+            writer.write(avatarName);
+        } catch (IOException e) {
+            System.err.println("Error saving avatar name.");
+            e.printStackTrace();
+        }
     }
 }

@@ -90,6 +90,7 @@ public class MainMenu {
             }
         }
         long inputnumber = Long.parseLong(input); // Convert string input to long
+        saveSeed(inputnumber);
         return inputnumber;
     }
     public String avatarName() {
@@ -116,4 +117,11 @@ public class MainMenu {
         return input;
     }
 
+    public void saveSeed(long seed) {
+        try (FileWriter writer = new FileWriter("lastSeed.txt")) {
+            writer.write(Long.toString(seed));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
