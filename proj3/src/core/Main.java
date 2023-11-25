@@ -2,13 +2,13 @@ package core;
 
 import edu.princeton.cs.algs4.StdDraw;
 import tileengine.TERenderer;
-import java.io.FileWriter;
+
 import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.io.IOException;
-import static edu.princeton.cs.algs4.StdDraw.*;
+import java.util.Scanner;
 
 public class Main {
     public static final int WIDTH = 80;
@@ -48,6 +48,8 @@ public class Main {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world.getTiles());
 
+        boolean quitGameStarted = false; // Flag to track quit sequence
+
         while (true) {
             if (avatarName != null) {
                 world.displayHUD(world, avatarName);
@@ -60,7 +62,16 @@ public class Main {
 
             if (StdDraw.hasNextKeyTyped()) {
                 char characterMovement = StdDraw.nextKeyTyped();
-                handleMovement(world, characterMovement);
+
+                // Check for quit sequence
+                if (characterMovement == ':' && !quitGameStarted) {
+                    quitGameStarted = true; // First part of quit sequence detected
+                } else if ((characterMovement == 'Q' || characterMovement == 'q') && quitGameStarted) {
+                    System.exit(0); // Quit if ':' was pressed before 'Q' or 'q'
+                } else {
+                    quitGameStarted = false; // Reset flag if other keys are pressed
+                    handleMovement(world, characterMovement);
+                }
             }
         }
     }
