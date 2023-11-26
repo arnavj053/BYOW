@@ -32,68 +32,14 @@ public class Main {
                 runGameLoop(newWorld, avatarName);
             }
             if (userSelection == 2) { // Load Game
-                long savedSeed = World.getSeedFromSaveFile("gameState.txt");
-                if (savedSeed != -1) {
-                    World loadedWorld = new World(savedSeed);
-                    loadedWorld.loadGameState("gameState.txt");
-                    avatarName = loadAvatarName(); // Load the most recent avatar name
-                    runGameLoop(loadedWorld, avatarName);
+                World loadedWorld = loadGame(); // Use the loadGame() method
+                if (loadedWorld != null) {
+                    avatarName = loadAvatarName(); // Load the avatar name for the saved game
+                    runGameLoop(loadedWorld, avatarName); // Continue the game from the loaded state
                 }
-            }
-            else if (userSelection == 3) {
-                // Exit or other options
-                mainMenuRunning = false;
             }
         }
     }
-
-    // Inside the Main class
-
-    public static TETile[][] getWorldFromInput(String input) {
-        World world = null;
-        long seed = 0;
-        int i = 0;
-        boolean isNewWorld = false;
-
-        // Parse the input string
-        while (i < input.length()) {
-            char c = input.charAt(i);
-
-            if (c == 'N' || c == 'L') {
-                isNewWorld = c == 'N';
-                i++;
-                StringBuilder seedBuilder = new StringBuilder();
-                while (i < input.length() && Character.isDigit(input.charAt(i))) {
-                    seedBuilder.append(input.charAt(i));
-                    i++;
-                }
-                seed = Long.parseLong(seedBuilder.toString());
-                if (isNewWorld) {
-                    world = new World(seed);
-                    world.initializeWorld(seed);
-                } else {
-                    // Load the world state for the given seed
-                    // This would require additional implementation to load saved states
-                }
-            } else if (c == ':') {
-                if (i + 1 < input.length() && input.charAt(i + 1) == 'Q') {
-                    // Save the current state if needed
-                    // Skip the 'Q' character
-                    i++;
-                }
-            } else {
-                // Simulate movements
-                if (world != null) {
-                    world.simulateMovement(c);
-                }
-            }
-
-            i++;
-        }
-
-        return world != null ? world.getTiles() : null;
-    }
-
 
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
@@ -208,12 +154,12 @@ public class Main {
                 }
                 World world = new World(seed);
                 world.updateAvatarPosition(avatarX, avatarY);
-                return world;
+                return world; // Return the loaded world
             } catch (FileNotFoundException e) {
                 System.err.println("Error loading game state.");
                 e.printStackTrace();
             }
         }
-        return null;
+        return null; // Return null if the file does not exist
     }
 }

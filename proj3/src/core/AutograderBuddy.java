@@ -6,51 +6,69 @@ import tileengine.Tileset;
 public class AutograderBuddy {
 
     /**
-     * This method should simulate the world generation process without actually
-     * rendering anything to the screen. The input string will be used as a seed for
-     * the random number generator to ensure reproducibility.
+     * Simulates a game, but doesn't render anything or call any StdDraw
+     * methods. Instead, returns the world that would result if the input string
+     * had been typed on the keyboard.
      *
-     * @param input the input string to feed to the world generator
+     * Recall that strings ending in ":q" should cause the game to quit and
+     * save. To "quit" in this method, save the game to a file, then just return
+     * the TETile[][]. Do not call System.exit(0) in this method.
+     *
+     * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
     public static TETile[][] getWorldFromInput(String input) {
-        long seed = inputToSeed(input);
-        World world = new World(seed); // Modify the World constructor to accept a seed parameter
-        return world.getTiles();
+        World world = null;
+        int i = 0;
+        StringBuilder seedBuilder = new StringBuilder();
+
+        // Parse the input string
+        while (i < input.length()) {
+            char c = input.charAt(i);
+            i++;
+
+            if (c == 'N') {
+                // Handle New Game
+                while (i < input.length() && Character.isDigit(input.charAt(i))) {
+                    seedBuilder.append(input.charAt(i));
+                    i++;
+                }
+                long seed = Long.parseLong(seedBuilder.toString());
+                world = new World(seed); // Initialize with the new seed
+                world.initializeWorld(seed); // Initialize the world
+            } else if (c == 'L') {
+                // Handle Load Game
+                world = Main.loadGame(); // Use the existing loadGame method
+                if (world == null) {
+                    return null; // If loading fails, return null
+                }
+            } else {
+                // Handle other actions like movement
+                if (world != null) {
+                    world.simulateMovement(c);
+                }
+            }
+        }
+
+        return world != null ? world.getTiles() : null;
     }
 
-    /**
-     * Converts the input string into a numeric seed.
-     *
-     * @param input the input string
-     * @return the numeric seed
-     */
-    private static long inputToSeed(String input) {
-        // Implement this method to convert the input string to a numeric seed
-        // For example, by parsing the numeric part of the input.
-        // This is a stub and needs proper implementation.
-        return Long.parseLong(input.replaceAll("[^0-9]", ""));
-    }
 
     /**
-     * Checks whether the given tile is a floor/ground tile.
-     *
-     * @param t the tile to check
-     * @return true if the tile is a floor tile, false otherwise
+     * Used to tell the autograder which tiles are the floor/ground (including
+     * any lights/items resting on the ground). Change this
+     * method if you add additional tiles.
      */
     public static boolean isGroundTile(TETile t) {
-        return t.equals(Tileset.FLOOR);
+        return t.character() == Tileset.FLOOR.character()
+                || t.character() == Tileset.AVATAR.character();
     }
 
     /**
-     * Checks whether the given tile is a wall/boundary tile.
-     *
-     * @param t the tile to check
-     * @return true if the tile is a wall tile, false otherwise
+     * Used to tell the autograder while tiles are the walls/boundaries. Change
+     * this method if you add additional tiles.
      */
     public static boolean isBoundaryTile(TETile t) {
-        return t.equals(Tileset.WALL);
+        return t.character() == Tileset.WALL.character();
     }
-
-    // Additional methods to support autograding tests, if necessary...
 }
