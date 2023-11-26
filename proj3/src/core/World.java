@@ -11,10 +11,16 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Comparator;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class World {
     private Random random;
     private List<Room> rooms;
+    public static long seed;
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
     public static final int WINDOW_WIDTH = 80;
@@ -49,10 +55,32 @@ public class World {
         createRooms();
         connectRooms();
         addWallsAroundHallways();
+        this.seed = seed;
         this.tileAvatar = Tileset.AVATAR;
         this.avatarPosX = validInitialAvatarPosition().x;
         this.avatarPosY = validInitialAvatarPosition().y;
         tiles[avatarPosX][avatarPosY] = tileAvatar;
+    }
+
+    public void initializeWorld(long seed) {
+        this.random = new Random(seed);
+        initializeTiles(WIDTH, HEIGHT);
+        createRooms();
+        connectRooms();
+        addWallsAroundHallways();
+        // Set the initial avatar position
+        this.avatarPosX = validInitialAvatarPosition().x;
+        this.avatarPosY = validInitialAvatarPosition().y;
+        tiles[avatarPosX][avatarPosY] = tileAvatar;
+    }
+
+    public void simulateMovement(char direction) {
+        switch (direction) {
+            case 'W': tryMove(0, 1); break;
+            case 'A': tryMove(-1, 0); break;
+            case 'S': tryMove(0, -1); break;
+            case 'D': tryMove(1, 0); break;
+        }
     }
 
     // Union-find methods
@@ -124,7 +152,7 @@ public class World {
         return true;
     }
     
-    private void connectRooms() {
+    public void connectRooms() {
         // Sort the rooms by their x-coordinate (or y-coordinate) to make it simple
         rooms.sort(Comparator.comparingInt(r -> r.x));
 
@@ -303,6 +331,129 @@ public class World {
         }
         return null;
     }
+
+    public void saveGameState(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            // Save the seed and avatar position
+            writer.write("Seed:" + this.seed + "\n");
+            writer.write("AvatarX:" + avatarPosX + "\n");
+            writer.write("AvatarY:" + avatarPosY + "\n");
+
+            // Save the tiles array
+            for (int y = 0; y < HEIGHT; y++) {
+                for (int x = 0; x < WIDTH; x++) {
+                    String tileCode = getTileCode(tiles[x][y]); // Convert tile to a string code
+                    writer.write(tileCode + ",");
+                }
+                writer.write("\n");
+            }
+            writer.write("PreviousTile:" + getTileCode(previousTile) + "\n");
+        } catch (IOException e) {
+            System.err.println("Error saving game state.");
+            e.printStackTrace();
+        }
+    }
+
+    private String getTileCode(TETile tile) {
+        if (tile == Tileset.FLOOR) {
+            return "F"; // Representing floor with "F"
+        } else if (tile == Tileset.WALL) {
+            return "W"; // Representing wall with "W"
+        }
+        // ... other tile types ...
+        return "X"; // A default code for unknown or empty tiles
+    }
+
+    // Method to load the game state
+    // Method to load the game state
+    public void loadGameState(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            long seed = 0;
+            int avatarX = 0;
+            int avatarY = 0;
+
+            boolean readingTiles = false;
+            int y = 0;
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                if (line.startsWith("Seed:")) {
+                    seed = Long.parseLong(line.split(":")[1]);
+                } else if (line.startsWith("AvatarX:")) {
+                    avatarX = Integer.parseInt(line.split(":")[1]);
+                } else if (line.startsWith("AvatarY:")) {
+                    avatarY = Integer.parseInt(line.split(":")[1]);
+                } else if (line.startsWith("PreviousTile:")) {
+                    previousTile = getTileFromCode(line.split(":")[1]);
+                } else {
+                    // Start reading the tile layout
+                    readingTiles = true;
+                }
+
+                if (readingTiles && y < HEIGHT) {
+                    String[] tileCodes = line.split(",");
+                    for (int x = 0; x < WIDTH; x++) {
+                        tiles[x][y] = getTileFromCode(tileCodes[x]);
+                    }
+                    y++;
+                }
+            }
+
+            // Update game state
+            this.seed = seed;
+            // Set the avatar position
+            this.avatarPosX = avatarX;
+            this.avatarPosY = avatarY;
+            // Set the tile at the avatar's new position to the avatar tile
+            tiles[avatarPosX][avatarPosY] = tileAvatar;
+        } catch (IOException e) {
+            System.err.println("Error loading game state.");
+            e.printStackTrace();
+        }
+    }
+
+
+    private TETile getTileFromCode(String code) {
+        switch (code) {
+            case "F":
+                return Tileset.FLOOR;
+            case "W":
+                return Tileset.WALL;
+            // ... other tile types ...
+            default:
+                return Tileset.NOTHING; // Default tile for unknown codes
+        }
+    }
+    public static long getSeedFromSaveFile(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.startsWith("Seed:")) {
+                    return Long.parseLong(line.split(":")[1]);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading game state.");
+            e.printStackTrace();
+        }
+        return -1; // Return a default or error value if no seed is found
+    }
+
+    private TETile previousTile = Tileset.FLOOR; // Initialize with a default tile type
+
+    public void updateAvatarPosition(int x, int y) {
+        // Ensure the new position is valid before updating
+        if (tiles[x][y] == Tileset.FLOOR) {
+            tiles[avatarPosX][avatarPosY] = previousTile; // Reset old position to its original state
+            previousTile = tiles[x][y]; // Save the current tile state before moving the avatar
+            avatarPosX = x;
+            avatarPosY = y;
+            tiles[avatarPosX][avatarPosY] = tileAvatar; // Set new position
+        }
+    }
+
+
 
     public static void main(String[] args) {
         World newWorld = new World(32324324);
