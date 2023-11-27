@@ -456,7 +456,26 @@ public class World {
             tiles[avatarPosX][avatarPosY] = tileAvatar; // Set new position
         }
     }
+    public void updateState(World otherWorld) {
+        if (otherWorld != null) {
+            // Update the seed
+            this.seed = otherWorld.seed;
 
+            // Update the avatar's position
+            this.avatarPosX = otherWorld.avatarPosX;
+            this.avatarPosY = otherWorld.avatarPosY;
+
+            // Update the tiles array
+            for (int x = 0; x < WIDTH; x++) {
+                for (int y = 0; y < HEIGHT; y++) {
+                    this.tiles[x][y] = otherWorld.tiles[x][y];
+                }
+            }
+
+            // If there are other attributes that define the state of the world,
+            // they should be updated here as well
+        }
+    }
 
 
     public static void main(String[] args) {

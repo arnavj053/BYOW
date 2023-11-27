@@ -38,10 +38,11 @@ public class Main {
             } else if (userSelection == 3) {
                 avatarName = menu.avatarName();
             }
-            if (userSelection == 3) { // Assuming 3 represents the Replay Last Game option
-                World replayWorld = new World(loadSeed()); // Ensure loadSeed method loads the seed from the last game
+            if (userSelection == MainMenu.REPLAY_GAME) {
+                // Assuming replayGame method is already implemented in Main class
+                World replayWorld = new World(loadSeed()); // Load the seed from the last game
                 replayGame(replayWorld);
-                continue; // Show menu again after replaying
+                // Continue showing the menu or other actions as needed
             }
         }
     }
@@ -49,11 +50,8 @@ public class Main {
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-<<<<<<< HEAD
         boolean replayMode = false;
         ter.renderFrame(world.getTiles());
-=======
->>>>>>> 0ee793cfcd00e419cd5accfd640f7038b1d9ae61
 
         boolean quitGameStarted = false; // Flag to track quit sequence
 
@@ -211,6 +209,8 @@ public class Main {
         ArrayList<Character> actions = loadActions();
         TERenderer ter = new TERenderer(); // Use your rendering class
         ter.initialize(World.WIDTH, World.HEIGHT); // Initial
+        long seed = loadSeed();
+        World replayWorld = new World(seed);
         for (char action : actions) {
             world.simulateMovement(action);
             ter.renderFrame(world.getTiles()); // Render the current state of the world
@@ -221,6 +221,6 @@ public class Main {
                 Thread.currentThread().interrupt();
             }
         }
-
+        world.updateState(replayWorld);
     }
 }
