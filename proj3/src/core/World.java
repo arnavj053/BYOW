@@ -31,8 +31,6 @@ public class World {
     private int avatarPosX;
     private int avatarPosY;
     private TETile tileAvatar;
-    private List<Character> actions;
-
 
     MainMenu nameAvatar = new MainMenu();
     private class Room {
@@ -60,7 +58,6 @@ public class World {
         this.avatarPosX = validInitialAvatarPosition().x;
         this.avatarPosY = validInitialAvatarPosition().y;
         tiles[avatarPosX][avatarPosY] = tileAvatar;
-        actions = new ArrayList<>();
     }
 
     public void initializeWorld(long seed) {
@@ -76,7 +73,6 @@ public class World {
     }
 
     public void simulateMovement(char direction) {
-        actions.add(direction);
         switch (direction) {
             case 'W': tryMove(0, 1); break;
             case 'A': tryMove(-1, 0); break;
@@ -84,9 +80,7 @@ public class World {
             case 'D': tryMove(1, 0); break;
         }
     }
-    public ArrayList<Character> getActions() {
-        return new ArrayList<>(actions); // Return a copy to prevent external modifications
-    }
+
     // Union-find methods
     private Room find(Room room) {
         // Path compression can be implemented here
@@ -155,7 +149,7 @@ public class World {
         parent.put(room, room);
         return true;
     }
-    
+
     public void connectRooms() {
         // Sort the rooms by their x-coordinate (or y-coordinate) to make it simple
         rooms.sort(Comparator.comparingInt(r -> r.x));
@@ -466,3 +460,4 @@ public class World {
         ter.renderFrame(newWorld.getTiles());
     }
 }
+
