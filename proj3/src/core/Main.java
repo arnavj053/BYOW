@@ -33,6 +33,8 @@ public class Main {
                     avatarName = loadAvatarName(); // Load the avatar name for the saved game
                     runGameLoop(loadedWorld, avatarName); // Continue the game from the loaded state
                 }
+            } else if (userSelection == 3) {
+                avatarName = menu.avatarName();
             }
         }
     }
@@ -40,7 +42,6 @@ public class Main {
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(world.getTiles());
 
         boolean quitGameStarted = false; // Flag to track quit sequence
 
