@@ -11,9 +11,9 @@ import java.util.Scanner;
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
+    static String avatarName = null; // Load the avatar name at the start
 
     public static void main(String[] args) {
-        String avatarName = null;
         MainMenu menu = new MainMenu();
         boolean mainMenuRunning = true;
 
@@ -22,19 +22,21 @@ public class Main {
 
             if (userSelection == 1) { // New Game
                 long seed = menu.enterSeed();
-                avatarName = menu.avatarName(); // Get avatar name for new game
-                saveAvatarName(avatarName); // Save the new avatar name
+                avatarName = loadAvatarName();
+                if (avatarName == null) {  // Only ask for avatar name if not already set
+                    avatarName = menu.avatarName();
+                }
+                saveAvatarName(avatarName); // Save or update the avatar name
                 World newWorld = new World(seed);
                 runGameLoop(newWorld, avatarName);
-            }
-            if (userSelection == 2) { // Load Game
-                World loadedWorld = loadGame(); // Use the loadGame() method
+            } else if (userSelection == 2) { // Load Game
+                World loadedWorld = loadGame();
                 if (loadedWorld != null) {
-                    avatarName = loadAvatarName(); // Load the avatar name for the saved game
-                    runGameLoop(loadedWorld, avatarName); // Continue the game from the loaded state
+                    runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
             } else if (userSelection == 3) {
                 avatarName = menu.avatarName();
+                saveAvatarName(avatarName); // Save the new avatar name
             }
         }
     }
