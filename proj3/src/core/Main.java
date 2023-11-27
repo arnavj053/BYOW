@@ -6,16 +6,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
-
 
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
+    static String avatarName = null; // Load the avatar name at the start
 
     public static void main(String[] args) {
-        String avatarName = null;
         MainMenu menu = new MainMenu();
         boolean mainMenuRunning = true;
 
@@ -24,25 +22,21 @@ public class Main {
 
             if (userSelection == 1) { // New Game
                 long seed = menu.enterSeed();
-                avatarName = menu.avatarName(); // Get avatar name for new game
-                saveAvatarName(avatarName); // Save the new avatar name
+                avatarName = loadAvatarName();
+                if (avatarName == null) {  // Only ask for avatar name if not already set
+                    avatarName = menu.avatarName();
+                }
+                saveAvatarName(avatarName); // Save or update the avatar name
                 World newWorld = new World(seed);
                 runGameLoop(newWorld, avatarName);
-            }
-            if (userSelection == 2) { // Load Game
-                World loadedWorld = loadGame(); // Use the loadGame() method
+            } else if (userSelection == 2) { // Load Game
+                World loadedWorld = loadGame();
                 if (loadedWorld != null) {
-                    avatarName = loadAvatarName(); // Load the avatar name for the saved game
-                    runGameLoop(loadedWorld, avatarName); // Continue the game from the loaded state
+                    runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
             } else if (userSelection == 3) {
                 avatarName = menu.avatarName();
-            }
-            if (userSelection == MainMenu.REPLAY_GAME) {
-                // Assuming replayGame method is already implemented in Main class
-                World replayWorld = new World(loadSeed()); // Load the seed from the last game
-                replayGame(replayWorld);
-                // Continue showing the menu or other actions as needed
+                saveAvatarName(avatarName); // Save the new avatar name
             }
         }
     }
@@ -50,8 +44,6 @@ public class Main {
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-        boolean replayMode = false;
-        ter.renderFrame(world.getTiles());
 
         boolean quitGameStarted = false; // Flag to track quit sequence
 
@@ -67,12 +59,6 @@ public class Main {
 
             if (StdDraw.hasNextKeyTyped()) {
                 char characterMovement = StdDraw.nextKeyTyped();
-
-                if ((characterMovement == 'R' || characterMovement == 'r') && !replayMode) {
-                    replayMode = true;
-                    replayGame(world);
-                    replayMode = false; // Reset replay mode after replaying
-                }
 
                 if (characterMovement == ':' && !quitGameStarted) {
                     quitGameStarted = true; // First part of quit sequence detected
@@ -118,7 +104,6 @@ public class Main {
         }
         return -1; // Return a default or error value if no seed is found
     }
-
     private static String loadAvatarName() {
         File file = new File("avatar_name.txt");
         if (file.exists()) {
@@ -135,7 +120,6 @@ public class Main {
         }
         return null;
     }
-
     public static void saveAvatarName(String avatarName) {
         try (FileWriter writer = new FileWriter("avatar_name.txt", false)) { // false to overwrite
             writer.write(avatarName);
@@ -147,19 +131,7 @@ public class Main {
 
     public static void saveGame(World world) {
         world.saveGameState("gameState.txt");
-        saveActions(world.getActions());
     }
-
-    private static void saveActions(ArrayList<Character> actions) {
-        try (FileWriter writer = new FileWriter("actions.txt")) {
-            for (char action : actions) {
-                writer.write(action);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public static World loadGame() {
         File file = new File("gameState.txt");
@@ -188,39 +160,5 @@ public class Main {
             }
         }
         return null; // Return null if the file does not exist
-    }
-
-    private static ArrayList<Character> loadActions() {
-        ArrayList<Character> actions = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File("actions.txt"))) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                for (char action : line.toCharArray()) {
-                    actions.add(action);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return actions;
-    }
-
-    public static void replayGame(World world) {
-        ArrayList<Character> actions = loadActions();
-        TERenderer ter = new TERenderer(); // Use your rendering class
-        ter.initialize(World.WIDTH, World.HEIGHT); // Initial
-        long seed = loadSeed();
-        World replayWorld = new World(seed);
-        for (char action : actions) {
-            world.simulateMovement(action);
-            ter.renderFrame(world.getTiles()); // Render the current state of the world
-
-            try {
-                Thread.sleep(100); // Delay for visibility
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-        world.updateState(replayWorld);
     }
 }

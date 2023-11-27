@@ -31,8 +31,6 @@ public class World {
     private int avatarPosX;
     private int avatarPosY;
     private TETile tileAvatar;
-    private List<Character> actions;
-
 
     MainMenu nameAvatar = new MainMenu();
     private class Room {
@@ -60,7 +58,6 @@ public class World {
         this.avatarPosX = validInitialAvatarPosition().x;
         this.avatarPosY = validInitialAvatarPosition().y;
         tiles[avatarPosX][avatarPosY] = tileAvatar;
-        actions = new ArrayList<>();
     }
 
     public void initializeWorld(long seed) {
@@ -76,7 +73,6 @@ public class World {
     }
 
     public void simulateMovement(char direction) {
-        actions.add(direction);
         switch (direction) {
             case 'W': tryMove(0, 1); break;
             case 'A': tryMove(-1, 0); break;
@@ -84,9 +80,7 @@ public class World {
             case 'D': tryMove(1, 0); break;
         }
     }
-    public ArrayList<Character> getActions() {
-        return new ArrayList<>(actions); // Return a copy to prevent external modifications
-    }
+
     // Union-find methods
     private Room find(Room room) {
         // Path compression can be implemented here
@@ -155,7 +149,7 @@ public class World {
         parent.put(room, room);
         return true;
     }
-    
+
     public void connectRooms() {
         // Sort the rooms by their x-coordinate (or y-coordinate) to make it simple
         rooms.sort(Comparator.comparingInt(r -> r.x));
@@ -456,26 +450,7 @@ public class World {
             tiles[avatarPosX][avatarPosY] = tileAvatar; // Set new position
         }
     }
-    public void updateState(World otherWorld) {
-        if (otherWorld != null) {
-            // Update the seed
-            this.seed = otherWorld.seed;
 
-            // Update the avatar's position
-            this.avatarPosX = otherWorld.avatarPosX;
-            this.avatarPosY = otherWorld.avatarPosY;
-
-            // Update the tiles array
-            for (int x = 0; x < WIDTH; x++) {
-                for (int y = 0; y < HEIGHT; y++) {
-                    this.tiles[x][y] = otherWorld.tiles[x][y];
-                }
-            }
-
-            // If there are other attributes that define the state of the world,
-            // they should be updated here as well
-        }
-    }
 
 
     public static void main(String[] args) {

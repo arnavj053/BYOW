@@ -9,7 +9,6 @@ import static edu.princeton.cs.algs4.StdDraw.*;
 public class MainMenu {
     public static final int WIDTH_MAIN = 600;
     public static final int HEIGHT_MAIN = 600;
-    public static final int REPLAY_GAME = 3;
 
     public MainMenu() {
         initialDraw();
@@ -36,7 +35,6 @@ public class MainMenu {
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 2.5, "New Game (N)");
             StdDraw.text(WIDTH_MAIN/ 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 5.5, "Quit (Q)");
-            StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 6.5, "Replay Last Game (R)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 10.5, "Create Avatar Name (C)");
 
             StdDraw.show();
@@ -67,9 +65,6 @@ public class MainMenu {
                 }
                 if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {
                     System.exit(0);
-                }
-                if (gameStatus == 'R' || gameStatus == 'r') {
-                    return REPLAY_GAME;
                 }
             }
         }
