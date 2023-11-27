@@ -1,12 +1,8 @@
 package core;
 import edu.princeton.cs.algs4.StdDraw;
-import tileengine.TETile;
-import tileengine.TERenderer;
-import tileengine.Tileset;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.*;
-import java.util.*;
 import static edu.princeton.cs.algs4.StdDraw.*;
 
 

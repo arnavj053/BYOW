@@ -1,6 +1,5 @@
 package core;
 import edu.princeton.cs.algs4.StdDraw;
-import net.sf.saxon.expr.Component;
 import tileengine.Tileset;
 import tileengine.TETile;
 import tileengine.TERenderer;
@@ -13,7 +12,6 @@ import java.util.Map;
 import java.util.Comparator;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 

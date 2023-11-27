@@ -1,10 +1,6 @@
 package core;
-import tileengine.TETile;
 import tileengine.TERenderer;
-import tileengine.Tileset;
 import edu.princeton.cs.algs4.StdDraw;
-import tileengine.TERenderer;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;

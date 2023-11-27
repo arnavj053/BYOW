@@ -19,32 +19,32 @@ public class AutograderBuddy {
      */
     public static TETile[][] getWorldFromInput(String input) {
         World world = null;
-        int i = 0;
+        long seed = 0;
+        boolean isNewGame = false;
         StringBuilder seedBuilder = new StringBuilder();
 
-        // Parse the input string
-        while (i < input.length()) {
+        for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            i++;
 
-            if (c == 'N') {
-                // Handle New Game
-                while (i < input.length() && Character.isDigit(input.charAt(i))) {
-                    seedBuilder.append(input.charAt(i));
-                    i++;
-                }
-                long seed = Long.parseLong(seedBuilder.toString());
-                world = new World(seed); // Initialize with the new seed
-                world.initializeWorld(seed); // Initialize the world
-            } else if (c == 'L') {
-                // Handle Load Game
-                world = Main.loadGame(); // Use the existing loadGame method
+            if (c == 'n' && !isNewGame) {
+                isNewGame = true;
+            } else if (isNewGame && Character.isDigit(c)) {
+                seedBuilder.append(c);
+            } else if (isNewGame && c == 's') {
+                seed = Long.parseLong(seedBuilder.toString());
+                world = new World(seed);
+                world.initializeWorld(seed);
+                isNewGame = false;
+            } else if (c == 'l' && !isNewGame) {
+                world = Main.loadGame();
                 if (world == null) {
-                    return null; // If loading fails, return null
+                    return null;
                 }
-            } else {
-                // Handle other actions like movement
-                if (world != null) {
+            } else if (!isNewGame) {
+                if (c == ':' && i + 1 < input.length() && input.charAt(i + 1) == 'q') {
+                    Main.saveGame(world);
+                    break;
+                } else {
                     world.simulateMovement(c);
                 }
             }
