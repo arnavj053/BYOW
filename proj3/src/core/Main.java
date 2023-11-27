@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class Main {
     public static final int WIDTH = 80;
@@ -38,12 +40,22 @@ public class Main {
                 avatarName = menu.avatarName();
                 saveAvatarName(avatarName); // Save the new avatar name
             }
+            if (userSelection == 3) { // Assuming 3 represents the Replay Last Game option
+                World replayWorld = new World(loadSeed()); // Ensure loadSeed method loads the seed from the last game
+                replayGame(replayWorld);
+                continue; // Show menu again after replaying
+            }
         }
     }
 
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
+<<<<<<< HEAD
+        boolean replayMode = false;
+        ter.renderFrame(world.getTiles());
+=======
+>>>>>>> 0ee793cfcd00e419cd5accfd640f7038b1d9ae61
 
         boolean quitGameStarted = false; // Flag to track quit sequence
 
@@ -59,6 +71,12 @@ public class Main {
 
             if (StdDraw.hasNextKeyTyped()) {
                 char characterMovement = StdDraw.nextKeyTyped();
+
+                if ((characterMovement == 'R' || characterMovement == 'r') && !replayMode) {
+                    replayMode = true;
+                    replayGame(world);
+                    replayMode = false; // Reset replay mode after replaying
+                }
 
                 if (characterMovement == ':' && !quitGameStarted) {
                     quitGameStarted = true; // First part of quit sequence detected
@@ -104,6 +122,7 @@ public class Main {
         }
         return -1; // Return a default or error value if no seed is found
     }
+
     private static String loadAvatarName() {
         File file = new File("avatar_name.txt");
         if (file.exists()) {
@@ -120,6 +139,7 @@ public class Main {
         }
         return null;
     }
+
     public static void saveAvatarName(String avatarName) {
         try (FileWriter writer = new FileWriter("avatar_name.txt", false)) { // false to overwrite
             writer.write(avatarName);
@@ -131,7 +151,19 @@ public class Main {
 
     public static void saveGame(World world) {
         world.saveGameState("gameState.txt");
+        saveActions(world.getActions());
     }
+
+    private static void saveActions(ArrayList<Character> actions) {
+        try (FileWriter writer = new FileWriter("actions.txt")) {
+            for (char action : actions) {
+                writer.write(action);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static World loadGame() {
         File file = new File("gameState.txt");
@@ -160,5 +192,37 @@ public class Main {
             }
         }
         return null; // Return null if the file does not exist
+    }
+
+    private static ArrayList<Character> loadActions() {
+        ArrayList<Character> actions = new ArrayList<>();
+        try (Scanner scanner = new Scanner(new File("actions.txt"))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                for (char action : line.toCharArray()) {
+                    actions.add(action);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return actions;
+    }
+
+    public static void replayGame(World world) {
+        ArrayList<Character> actions = loadActions();
+        TERenderer ter = new TERenderer(); // Use your rendering class
+        ter.initialize(World.WIDTH, World.HEIGHT); // Initial
+        for (char action : actions) {
+            world.simulateMovement(action);
+            ter.renderFrame(world.getTiles()); // Render the current state of the world
+
+            try {
+                Thread.sleep(100); // Delay for visibility
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
     }
 }
