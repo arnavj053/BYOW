@@ -23,6 +23,7 @@ public class MainMenu {
 
     public int showMenu() {
         boolean quitGameStart = false;
+        String avatarName = null;
         while (true) {
             StdDraw.clear(StdDraw.BLACK);
 
@@ -34,12 +35,17 @@ public class MainMenu {
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 2.5, "New Game (N)");
             StdDraw.text(WIDTH_MAIN/ 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 5.5, "Quit (Q)");
+<<<<<<< HEAD
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 6.5, "Replay Last Game (R)");
+=======
+            StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 10.5, "Create Avatar Name (C)");
+>>>>>>> 0ee793cfcd00e419cd5accfd640f7038b1d9ae61
 
             StdDraw.show();
 
-            if (hasNextKeyTyped()) {
-                char gameStatus = nextKeyTyped();
+            if (StdDraw.hasNextKeyTyped()) {
+                char gameStatus = StdDraw.nextKeyTyped();
+
                 if (gameStatus == 'Q' || gameStatus == 'q') {
                     System.exit(0);
                 }
@@ -47,10 +53,18 @@ public class MainMenu {
                     quitGameStart = true;
                 }
                 if (!quitGameStart) {
-                    if (gameStatus == 'N' || gameStatus == 'n') {
-                        return 1;
-                    }else if (gameStatus == 'L' || gameStatus == 'l') {
-                        return 2;
+                    switch (gameStatus) {
+                        case 'N':
+                        case 'n':
+                            return 1;
+                        case 'L':
+                        case 'l':
+                            return 2;
+                        case 'C':
+                        case 'c':
+                            avatarName = avatarName();
+                            Main.saveAvatarName(avatarName);
+                            break; // Continue showing the menu
                     }
                 }
                 if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {

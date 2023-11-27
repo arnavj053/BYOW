@@ -35,6 +35,8 @@ public class Main {
                     avatarName = loadAvatarName(); // Load the avatar name for the saved game
                     runGameLoop(loadedWorld, avatarName); // Continue the game from the loaded state
                 }
+            } else if (userSelection == 3) {
+                avatarName = menu.avatarName();
             }
             if (userSelection == 3) { // Assuming 3 represents the Replay Last Game option
                 World replayWorld = new World(loadSeed()); // Ensure loadSeed method loads the seed from the last game
@@ -47,8 +49,11 @@ public class Main {
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
+<<<<<<< HEAD
         boolean replayMode = false;
         ter.renderFrame(world.getTiles());
+=======
+>>>>>>> 0ee793cfcd00e419cd5accfd640f7038b1d9ae61
 
         boolean quitGameStarted = false; // Flag to track quit sequence
 
