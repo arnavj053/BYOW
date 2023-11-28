@@ -288,13 +288,11 @@ public class World {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Nothing");
-                StdDraw.show();
             }
             else {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Tile: " + currentTile);
-                StdDraw.show();
             }
         }
     }
@@ -302,7 +300,6 @@ public class World {
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.textLeft(World.WIDTH - 15, World.HEIGHT - 2, "Name: " + avatarName);
-        StdDraw.show();
     }
     public void tryMove(int deltaX, int deltaY) {
         if (canMove(deltaX, deltaY)) {
