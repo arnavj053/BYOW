@@ -14,6 +14,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import edu.princeton.cs.algs4.StdDraw;
+import tileengine.Tileset;
+import tileengine.TETile;
+import tileengine.TERenderer;
+import java.awt.*;
+import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Comparator;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class World {
     private Random random;
@@ -21,8 +36,6 @@ public class World {
     public static long seed;
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
-    public static final int WINDOW_WIDTH = 80;
-    public static final int WINDOW_HEIGHT = 45;
     private TETile[][] tiles;
     private int lastRoomWidth = 0;
     private int lastRoomHeight = 0;
@@ -31,6 +44,10 @@ public class World {
     private int avatarPosX;
     private int avatarPosY;
     private TETile tileAvatar;
+    private boolean lineOfSightEnabled = false;
+    public void toggleLineOfSight() {
+        lineOfSightEnabled = !lineOfSightEnabled;
+    }
 
     MainMenu nameAvatar = new MainMenu();
     private class Room {
@@ -280,6 +297,22 @@ public class World {
     public TETile[][] getTiles() {
         return tiles;
     }
+    public TETile[][] getVisibleTiles() {
+        TETile[][] visibleTiles = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                if (isWithinLineOfSight(x, y)) {
+                    visibleTiles[x][y] = tiles[x][y];
+                } else {
+                    visibleTiles[x][y] = Tileset.NOTHING; // Hide tiles outside line of sight
+                }
+            }
+        }
+        return visibleTiles;
+    }
+    private boolean isWithinLineOfSight(int x, int y) {
+        return Math.abs(x - avatarPosX) <= 1 && Math.abs(y - avatarPosY) <= 1;
+    }
 
     public void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
@@ -296,7 +329,7 @@ public class World {
             }
         }
     }
-    public void displayHUD(World currentWorld, String avatarName) {
+    public void displayHUD(String avatarName) {
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.textLeft(World.WIDTH - 15, World.HEIGHT - 2, "Name: " + avatarName);
@@ -360,7 +393,6 @@ public class World {
     }
 
     // Method to load the game state
-    // Method to load the game state
     public void loadGameState(String filename) {
         try (Scanner scanner = new Scanner(new File(filename))) {
             long seed = 0;
@@ -385,7 +417,6 @@ public class World {
                     // Start reading the tile layout
                     readingTiles = true;
                 }
-
                 if (readingTiles && y < HEIGHT) {
                     String[] tileCodes = line.split(",");
                     for (int x = 0; x < WIDTH; x++) {
@@ -407,7 +438,6 @@ public class World {
             e.printStackTrace();
         }
     }
-
 
     private TETile getTileFromCode(String code) {
         switch (code) {
@@ -448,10 +478,8 @@ public class World {
         }
     }
 
-
-
     public static void main(String[] args) {
-        World newWorld = new World(32324324);
+        World newWorld = new World(3232);
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(newWorld.getTiles());

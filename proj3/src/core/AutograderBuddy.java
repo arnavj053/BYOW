@@ -25,7 +25,6 @@ public class AutograderBuddy {
 
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-
             if (c == 'n' && !isNewGame) {
                 isNewGame = true;
             } else if (isNewGame && Character.isDigit(c)) {
@@ -53,15 +52,13 @@ public class AutograderBuddy {
         return world != null ? world.getTiles() : null;
     }
 
-
     /**
      * Used to tell the autograder which tiles are the floor/ground (including
      * any lights/items resting on the ground). Change this
      * method if you add additional tiles.
      */
     public static boolean isGroundTile(TETile t) {
-        return t.character() == Tileset.FLOOR.character()
-                || t.character() == Tileset.AVATAR.character();
+        return t.character() == Tileset.FLOOR.character() || t.character() == Tileset.AVATAR.character();
     }
 
     /**

@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import tileengine.TETile;
+
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
@@ -32,7 +34,6 @@ public class Main {
                 }
                 saveAvatarName(avatarName); // Save or update the avatar name
                 World newWorld = new World(seed);
-                fileloaded = false;
                 runGameLoop(newWorld, avatarName);
             } else if (userSelection == 2) { // Load Game
                 World loadedWorld = loadGame();
@@ -44,7 +45,7 @@ public class Main {
                 avatarName = menu.avatarName();
                 saveAvatarName(avatarName); // Save the new avatar name
                 break;
-            } if (userSelection == 4) { // Replay
+            } else if (userSelection == 4) { // Replay
                 long seed = loadSeed();
                 String replayActions = loadActions();
                 isReplay = true; // Set the flag to true for replay
@@ -58,13 +59,17 @@ public class Main {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         boolean quitGameStarted = false; // Flag to track quit sequence
+        boolean lineOfSightActive = false; // Flag for line of sight feature
         while (true) {
+            if (avatarName != null) {
+                world.displayHUD(avatarName);
+            }
             StdDraw.clear(Color.BLACK);
-            ter.drawTiles(world.getTiles());
+            TETile[][] tilesToRender = lineOfSightActive ? world.getVisibleTiles() : world.getTiles();
+            ter.drawTiles(tilesToRender);
             int positionX = (int) StdDraw.mouseX();
             int positionY = (int) StdDraw.mouseY();
             world.displayHUD(world, positionX, positionY);
-            world.displayHUD(world,avatarName);
             if (StdDraw.hasNextKeyTyped()) {
                 char characterMovement = StdDraw.nextKeyTyped();
                 if (characterMovement == ':' && !quitGameStarted) {
@@ -73,22 +78,26 @@ public class Main {
                     saveGame(world); // Save the game state
                     saveActions(actions.toString()); // Save the actions
                     System.exit(0); // Quit the game
+                } else if (characterMovement == 'L' || characterMovement == 'l') { // Toggle line of sight
+                    lineOfSightActive = !lineOfSightActive;
                 } else {
-                    // If not in the middle of a quit sequence, handle movement and record action
-                    handleMovement(world, characterMovement);
                     quitGameStarted = false; // Reset flag if other keys are pressed
+                    handleMovement(world, characterMovement);
                 }
             }
             StdDraw.show();
         }
     }
-
+    /**
+     * @source chat.openai.com
+     */
     private static void handleMovement(World world, char movement) {
         switch (Character.toLowerCase(movement)) {
             case 'w': world.tryMove(0, 1); break;
             case 'a': world.tryMove(-1, 0); break;
             case 's': world.tryMove(0, -1); break;
             case 'd': world.tryMove(1, 0); break;
+            case 'l': world.toggleLineOfSight(); break; // Toggle line of sight
         }
         if (!isReplay) { // Record actions only if it's not a replay
             actions.append(movement);
@@ -135,6 +144,7 @@ public class Main {
 
     public static void saveGame(World world) {
         world.saveGameState("gameState.txt");
+        saveActions(actions.toString());
     }
 
     public static World loadGame() {
@@ -203,10 +213,9 @@ public class Main {
     }
     private static void replayActions(String actions, long seed) {
         TERenderer ter = new TERenderer();
-        boolean replayDone = false;
         World world = new World(seed);// Initialize with the same seed as the original game
         if (avatarName != null) {
-            world.displayHUD(world, avatarName);
+            world.displayHUD(avatarName);
         }
         ter.initialize(WIDTH, HEIGHT);
         // Simulate and render each action
