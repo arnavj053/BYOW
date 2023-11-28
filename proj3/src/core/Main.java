@@ -12,9 +12,9 @@ import tileengine.TETile;
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
-    static String avName = null;
 
     public static void main(String[] args) {
+        String avName = null;
         MainMenu menu = new MainMenu();
         boolean mainMenuRunning = true;
 
