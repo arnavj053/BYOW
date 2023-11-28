@@ -12,7 +12,7 @@ import tileengine.TETile;
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
-    static String avatarName = null;
+    static String avName = null;
 
     public static void main(String[] args) {
         MainMenu menu = new MainMenu();
@@ -23,21 +23,21 @@ public class Main {
 
             if (userSelection == 1) { // New Game
                 long seed = menu.enterSeed();
-                avatarName = loadAvatarName();
-                if (avatarName == null) {  // Only ask for avatar name if not already set
-                    avatarName = menu.avatarName();
+                avName = loadAvatarName();
+                if (avName == null) {  // Only ask for avatar name if not already set
+                    avName = menu.avatarName();
                 }
-                saveAvatarName(avatarName); // Save or update the avatar name
+                saveAvatarName(avName); // Save or update the avatar name
                 World newWorld = new World(seed);
-                runGameLoop(newWorld, avatarName);
+                runGameLoop(newWorld, avName);
             } else if (userSelection == 2) { // Load Game
                 World loadedWorld = loadGame();
                 if (loadedWorld != null) {
                     runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
             } else if (userSelection == 3) { // name setting
-                avatarName = menu.avatarName();
-                saveAvatarName(avatarName);
+                avName = menu.avatarName();
+                saveAvatarName(avName);
             }
         }
     }
@@ -83,11 +83,18 @@ public class Main {
      */
     private static void handleMovement(World world, char movement) {
         switch (Character.toLowerCase(movement)) {
-            case 'w': world.tryMove(0, 1); break;
-            case 'a': world.tryMove(-1, 0); break;
-            case 's': world.tryMove(0, -1); break;
-            case 'd': world.tryMove(1, 0); break;
-            case 'l': world.toggleLineOfSight(); break; // Toggle line of sight
+            case 'w': world.tryMove(0, 1);
+            break;
+            case 'a': world.tryMove(-1, 0);
+            break;
+            case 's': world.tryMove(0, -1);
+            break;
+            case 'd': world.tryMove(1, 0);
+            break;
+            case 'l': world.toggleLineOfSight();
+            break; // Toggle line of sight
+            default:
+                break;
         }
     }
 

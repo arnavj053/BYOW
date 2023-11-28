@@ -18,14 +18,14 @@ import java.util.Scanner;
 public class World {
     private Random random;
     private List<Room> rooms;
-    public static long seed;
+    private long s;
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
     private TETile[][] tiles;
     private int lastRoomWidth = 0;
     private int lastRoomHeight = 0;
     private Map<Room, Room> parent; // To track the parent of each room
-    private static final double DESIRED_COVERAGE = 0.25; // 25% of the grid
+    private final double DESIRED_COVERAGE = 0.25; // 25% of the grid
     private int avatarPosX;
     private int avatarPosY;
     private TETile tileAvatar;
@@ -54,20 +54,8 @@ public class World {
         createRooms();
         connectRooms();
         addWallsAroundHallways();
-        this.seed = seed;
+        this.s = seed;
         this.tileAvatar = Tileset.AVATAR;
-        this.avatarPosX = validInitialAvatarPosition().x;
-        this.avatarPosY = validInitialAvatarPosition().y;
-        tiles[avatarPosX][avatarPosY] = tileAvatar;
-    }
-
-    public void initializeWorld(long seed) {
-        this.random = new Random(seed);
-        initializeTiles(WIDTH, HEIGHT);
-        createRooms();
-        connectRooms();
-        addWallsAroundHallways();
-        // Set the initial avatar position
         this.avatarPosX = validInitialAvatarPosition().x;
         this.avatarPosY = validInitialAvatarPosition().y;
         tiles[avatarPosX][avatarPosY] = tileAvatar;
@@ -75,10 +63,16 @@ public class World {
 
     public void simulateMovement(char direction) {
         switch (direction) {
-            case 'W': tryMove(0, 1); break;
-            case 'A': tryMove(-1, 0); break;
-            case 'S': tryMove(0, -1); break;
-            case 'D': tryMove(1, 0); break;
+            case 'W': tryMove(0, 1);
+            break;
+            case 'A': tryMove(-1, 0);
+            break;
+            case 'S': tryMove(0, -1);
+            break;
+            case 'D': tryMove(1, 0);
+            break;
+            default:
+                break;
         }
     }
 
@@ -309,13 +303,12 @@ public class World {
             if (currentTile == null) {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
-                StdDraw.textLeft( 2, World.HEIGHT - 2, "Nothing");
+                StdDraw.textLeft(2, World.HEIGHT - 2, "Nothing");
                 StdDraw.show();
-            }
-            else {
+            } else {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
-                StdDraw.textLeft( 2, World.HEIGHT - 2, "Tile: " + currentTile);
+                StdDraw.textLeft(2, World.HEIGHT - 2, "Tile: " + currentTile);
                 StdDraw.show();
             }
         }
@@ -338,14 +331,15 @@ public class World {
     private boolean canMove(int deltaX, int deltaY) {
         int newX = avatarPosX + deltaX;
         int newY = avatarPosY + deltaY;
-        return newX >= 0 && newX < WIDTH && newY >= 0 && newY < HEIGHT && tiles[newX][newY].description().equals("floor");
+        return newX >= 0 && newX < WIDTH && newY >= 0 && newY < HEIGHT
+                && tiles[newX][newY].description().equals("floor");
     }
 
     private Point validInitialAvatarPosition() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 if (tiles[x][y].description().equals("floor")) {
-                    return new Point(x,y);
+                    return new Point(x, y);
                 }
             }
         }
@@ -355,7 +349,7 @@ public class World {
     public void saveGameState(String filename) {
         try (FileWriter writer = new FileWriter(filename)) {
             // Save the seed and avatar position
-            writer.write("Seed:" + this.seed + "\n");
+            writer.write("Seed:" + this.s + "\n");
             writer.write("AvatarX:" + avatarPosX + "\n");
             writer.write("AvatarY:" + avatarPosY + "\n");
 
@@ -420,7 +414,7 @@ public class World {
             }
 
             // Update game state
-            this.seed = seed;
+            this.s = seed;
             // Set the avatar position
             this.avatarPosX = avatarX;
             this.avatarPosY = avatarY;
@@ -442,20 +436,6 @@ public class World {
             default:
                 return Tileset.NOTHING; // Default tile for unknown codes
         }
-    }
-    public static long getSeedFromSaveFile(String filename) {
-        try (Scanner scanner = new Scanner(new File(filename))) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("Seed:")) {
-                    return Long.parseLong(line.split(":")[1]);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading game state.");
-            e.printStackTrace();
-        }
-        return -1; // Return a default or error value if no seed is found
     }
 
     private TETile previousTile = Tileset.FLOOR; // Initialize with a default tile type
