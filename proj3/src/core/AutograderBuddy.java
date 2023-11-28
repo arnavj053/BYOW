@@ -72,3 +72,4 @@ public class AutograderBuddy {
         return t.character() == Tileset.WALL.character();
     }
 }
+
