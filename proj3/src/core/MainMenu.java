@@ -3,17 +3,13 @@ import edu.princeton.cs.algs4.StdDraw;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.*;
-import static edu.princeton.cs.algs4.StdDraw.*;
-
 
 public class MainMenu {
     public static final int WIDTH_MAIN = 600;
     public static final int HEIGHT_MAIN = 600;
-
     public MainMenu() {
         initialDraw();
     }
-
     public void initialDraw() {
         StdDraw.setCanvasSize(WIDTH_MAIN, HEIGHT_MAIN);
         StdDraw.setXscale(0, WIDTH_MAIN);
@@ -36,8 +32,6 @@ public class MainMenu {
             StdDraw.text(WIDTH_MAIN/ 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 5.5, "Quit (Q)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 10.5, "Create Avatar Name (C)");
-            StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 12.5, "Replay (R)");
-
 
             StdDraw.show();
 
@@ -63,9 +57,6 @@ public class MainMenu {
                             avatarName = avatarName();
                             Main.saveAvatarName(avatarName);
                             break; // Continue showing the menu
-                        case 'R':
-                        case 'r':
-                            return 4;  // Replay option
                     }
                 }
                 if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {

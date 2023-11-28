@@ -7,17 +7,12 @@ import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
-
 import tileengine.TETile;
 
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
-    static String avatarName = null; // Load the avatar name at the start
-    static StringBuilder actions = new StringBuilder(); // To store actions
-    static boolean isReplay = false;
-    static boolean fileloaded = false;
-
+    static String avatarName = null;
 
     public static void main(String[] args) {
         MainMenu menu = new MainMenu();
@@ -37,20 +32,12 @@ public class Main {
                 runGameLoop(newWorld, avatarName);
             } else if (userSelection == 2) { // Load Game
                 World loadedWorld = loadGame();
-                fileloaded = true;
                 if (loadedWorld != null) {
                     runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
-            } else if (userSelection == 3) {
+            } else if (userSelection == 3) { // name setting
                 avatarName = menu.avatarName();
-                saveAvatarName(avatarName); // Save the new avatar name
-                break;
-            } else if (userSelection == 4) { // Replay
-                long seed = loadSeed();
-                String replayActions = loadActions();
-                isReplay = true; // Set the flag to true for replay
-                replayActions(replayActions, seed);
-                // Reset the flag after replay is done
+                saveAvatarName(avatarName);
             }
         }
     }
@@ -58,8 +45,10 @@ public class Main {
     private static void runGameLoop(World world, String avatarName) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
+
         boolean quitGameStarted = false; // Flag to track quit sequence
         boolean lineOfSightActive = false; // Flag for line of sight feature
+
         while (true) {
             if (avatarName != null) {
                 world.displayHUD(avatarName);
@@ -70,13 +59,14 @@ public class Main {
             int positionX = (int) StdDraw.mouseX();
             int positionY = (int) StdDraw.mouseY();
             world.displayHUD(world, positionX, positionY);
+
             if (StdDraw.hasNextKeyTyped()) {
                 char characterMovement = StdDraw.nextKeyTyped();
+
                 if (characterMovement == ':' && !quitGameStarted) {
-                    quitGameStarted = true;
+                    quitGameStarted = true; // First part of quit sequence detected
                 } else if ((characterMovement == 'Q' || characterMovement == 'q') && quitGameStarted) {
                     saveGame(world); // Save the game state
-                    saveActions(actions.toString()); // Save the actions
                     System.exit(0); // Quit the game
                 } else if (characterMovement == 'L' || characterMovement == 'l') { // Toggle line of sight
                     lineOfSightActive = !lineOfSightActive;
@@ -85,9 +75,9 @@ public class Main {
                     handleMovement(world, characterMovement);
                 }
             }
-            StdDraw.show();
         }
     }
+
     /**
      * @source chat.openai.com
      */
@@ -99,24 +89,8 @@ public class Main {
             case 'd': world.tryMove(1, 0); break;
             case 'l': world.toggleLineOfSight(); break; // Toggle line of sight
         }
-        if (!isReplay) { // Record actions only if it's not a replay
-            actions.append(movement);
-        }
     }
 
-    public static long loadSeed() {
-        File file = new File("lastSeed.txt");
-        if (file.exists()) {
-            try (Scanner scanner = new Scanner(file)) {
-                if (scanner.hasNextLong()) {
-                    return scanner.nextLong();
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return -1; // Return a default or error value if no seed is found
-    }
     private static String loadAvatarName() {
         File file = new File("avatar_name.txt");
         if (file.exists()) {
@@ -133,6 +107,7 @@ public class Main {
         }
         return null;
     }
+
     public static void saveAvatarName(String avatarName) {
         try (FileWriter writer = new FileWriter("avatar_name.txt", false)) { // false to overwrite
             writer.write(avatarName);
@@ -144,7 +119,6 @@ public class Main {
 
     public static void saveGame(World world) {
         world.saveGameState("gameState.txt");
-        saveActions(actions.toString());
     }
 
     public static World loadGame() {
@@ -173,66 +147,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        return null; // Return null if the file does not exist
-    }
-    private static void saveActions(String actions) {
-        if (!fileloaded) {
-            try (FileWriter writer = new FileWriter("action.txt", false)) {// false to overwrite
-                writer.write(actions);
-            } catch (IOException e) {
-                System.err.println("Error saving avatar name.");
-                e.printStackTrace();
-            }
-        }
-        if (fileloaded) {
-            StringBuilder newactions = new StringBuilder();
-            newactions.append(loadActions());
-            newactions.append(actions);
-            try (FileWriter writer = new FileWriter("action.txt", false)) {// false to overwrite
-                writer.write(newactions.toString());
-            } catch (IOException e) {
-                System.err.println("Error saving avatar name.");
-                e.printStackTrace();
-            }
-        }
-    }
-    private static String loadActions() {
-        File file = new File("action.txt");
-        if (file.exists()) {
-            try (Scanner scanner = new Scanner(file)) {
-                while (scanner.hasNextLine()) {
-                    actions.append(scanner.nextLine());
-                }
-            } catch (FileNotFoundException e) {
-                System.err.println("Error reading actions file.");
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return actions.toString();
-    }
-    private static void replayActions(String actions, long seed) {
-        TERenderer ter = new TERenderer();
-        World world = new World(seed);// Initialize with the same seed as the original game
-        if (avatarName != null) {
-            world.displayHUD(avatarName);
-        }
-        ter.initialize(WIDTH, HEIGHT);
-        // Simulate and render each action
-        for (char action : actions.toCharArray()) {
-            switch (action) {
-                case 'w': world.tryMove(0, 1); break;
-                case 'a': world.tryMove(-1, 0); break;
-                case 's': world.tryMove(0, -1); break;
-                case 'd': world.tryMove(1, 0); break;
-            }
-            ter.renderFrame(world.getTiles());
-            StdDraw.pause(200);
-        }
-        runGameLoop(world, loadAvatarName());
-        isReplay = false;
+        return null;
     }
 }
-
-
-

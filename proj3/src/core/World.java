@@ -14,21 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import edu.princeton.cs.algs4.StdDraw;
-import tileengine.Tileset;
-import tileengine.TETile;
-import tileengine.TERenderer;
-import java.awt.*;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Comparator;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
 
 public class World {
     private Random random;
@@ -49,7 +34,6 @@ public class World {
         lineOfSightEnabled = !lineOfSightEnabled;
     }
 
-    MainMenu nameAvatar = new MainMenu();
     private class Room {
         int x, y, width, height;
 
@@ -240,7 +224,8 @@ public class World {
                 }
             }
         }
-    };
+    }
+
     public class Point {
         private final int x;
         private final int y;
@@ -297,6 +282,7 @@ public class World {
     public TETile[][] getTiles() {
         return tiles;
     }
+
     public TETile[][] getVisibleTiles() {
         TETile[][] visibleTiles = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x++) {
@@ -310,9 +296,12 @@ public class World {
         }
         return visibleTiles;
     }
+
     private boolean isWithinLineOfSight(int x, int y) {
         return Math.abs(x - avatarPosX) <= 1 && Math.abs(y - avatarPosY) <= 1;
     }
+
+
 
     public void displayHUD(World currentWorld, int posX, int posY) {
         if (posX >= 0 && posX < WIDTH && posY >= 0 && posY < HEIGHT) {
@@ -321,11 +310,13 @@ public class World {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Nothing");
+                StdDraw.show();
             }
             else {
                 StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.textLeft( 2, World.HEIGHT - 2, "Tile: " + currentTile);
+                StdDraw.show();
             }
         }
     }
@@ -333,6 +324,7 @@ public class World {
         StdDraw.setFont(new Font("Monaco", Font.PLAIN, 20));
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.textLeft(World.WIDTH - 15, World.HEIGHT - 2, "Name: " + avatarName);
+        StdDraw.show();
     }
     public void tryMove(int deltaX, int deltaY) {
         if (canMove(deltaX, deltaY)) {
@@ -392,6 +384,7 @@ public class World {
         return "X"; // A default code for unknown or empty tiles
     }
 
+
     // Method to load the game state
     public void loadGameState(String filename) {
         try (Scanner scanner = new Scanner(new File(filename))) {
@@ -439,13 +432,13 @@ public class World {
         }
     }
 
+
     private TETile getTileFromCode(String code) {
         switch (code) {
             case "F":
                 return Tileset.FLOOR;
             case "W":
                 return Tileset.WALL;
-            // ... other tile types ...
             default:
                 return Tileset.NOTHING; // Default tile for unknown codes
         }
@@ -477,6 +470,7 @@ public class World {
             tiles[avatarPosX][avatarPosY] = tileAvatar; // Set new position
         }
     }
+
 
     public static void main(String[] args) {
         World newWorld = new World(3232);
