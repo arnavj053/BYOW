@@ -479,3 +479,4 @@ public class World {
         ter.renderFrame(newWorld.getTiles());
     }
 }
+
