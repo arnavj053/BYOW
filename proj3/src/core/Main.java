@@ -7,11 +7,12 @@ import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+import tileengine.TETile;
 
 public class Main {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 40;
-    static String avatarName = null; // Load the avatar name at the start
+    static String avatarName = null;
 
     public static void main(String[] args) {
         MainMenu menu = new MainMenu();
@@ -34,9 +35,9 @@ public class Main {
                 if (loadedWorld != null) {
                     runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
-            } else if (userSelection == 3) {
+            } else if (userSelection == 3) { // name setting
                 avatarName = menu.avatarName();
-                saveAvatarName(avatarName); // Save the new avatar name
+                saveAvatarName(avatarName);
             }
         }
     }
@@ -46,13 +47,15 @@ public class Main {
         ter.initialize(WIDTH, HEIGHT);
 
         boolean quitGameStarted = false; // Flag to track quit sequence
+        boolean lineOfSightActive = false; // Flag for line of sight feature
 
         while (true) {
             if (avatarName != null) {
-                world.displayHUD(world, avatarName);
+                world.displayHUD(avatarName);
             }
             StdDraw.clear(Color.BLACK);
-            ter.drawTiles(world.getTiles());
+            TETile[][] tilesToRender = lineOfSightActive ? world.getVisibleTiles() : world.getTiles();
+            ter.drawTiles(tilesToRender);
             int positionX = (int) StdDraw.mouseX();
             int positionY = (int) StdDraw.mouseY();
             world.displayHUD(world, positionX, positionY);
@@ -65,6 +68,8 @@ public class Main {
                 } else if ((characterMovement == 'Q' || characterMovement == 'q') && quitGameStarted) {
                     saveGame(world); // Save the game state
                     System.exit(0); // Quit the game
+                } else if (characterMovement == 'L' || characterMovement == 'l') { // Toggle line of sight
+                    lineOfSightActive = !lineOfSightActive;
                 } else {
                     quitGameStarted = false; // Reset flag if other keys are pressed
                     handleMovement(world, characterMovement);
@@ -73,37 +78,19 @@ public class Main {
         }
     }
 
+    /**
+     * @source chat.openai.com
+     */
     private static void handleMovement(World world, char movement) {
         switch (Character.toLowerCase(movement)) {
-            case 'w':
-                world.tryMove(0, 1);
-                break;
-            case 'a':
-                world.tryMove(-1, 0);
-                break;
-            case 's':
-                world.tryMove(0, -1);
-                break;
-            case 'd':
-                world.tryMove(1, 0);
-                break;
-            // Handle other keys if needed
+            case 'w': world.tryMove(0, 1); break;
+            case 'a': world.tryMove(-1, 0); break;
+            case 's': world.tryMove(0, -1); break;
+            case 'd': world.tryMove(1, 0); break;
+            case 'l': world.toggleLineOfSight(); break; // Toggle line of sight
         }
     }
 
-    public static long loadSeed() {
-        File file = new File("lastSeed.txt");
-        if (file.exists()) {
-            try (Scanner scanner = new Scanner(file)) {
-                if (scanner.hasNextLong()) {
-                    return scanner.nextLong();
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return -1; // Return a default or error value if no seed is found
-    }
     private static String loadAvatarName() {
         File file = new File("avatar_name.txt");
         if (file.exists()) {
@@ -120,6 +107,7 @@ public class Main {
         }
         return null;
     }
+
     public static void saveAvatarName(String avatarName) {
         try (FileWriter writer = new FileWriter("avatar_name.txt", false)) { // false to overwrite
             writer.write(avatarName);
@@ -159,6 +147,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        return null; // Return null if the file does not exist
+        return null;
     }
 }

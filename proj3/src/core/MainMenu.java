@@ -3,17 +3,13 @@ import edu.princeton.cs.algs4.StdDraw;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.*;
-import static edu.princeton.cs.algs4.StdDraw.*;
-
 
 public class MainMenu {
     public static final int WIDTH_MAIN = 600;
     public static final int HEIGHT_MAIN = 600;
-
     public MainMenu() {
         initialDraw();
     }
-
     public void initialDraw() {
         StdDraw.setCanvasSize(WIDTH_MAIN, HEIGHT_MAIN);
         StdDraw.setXscale(0, WIDTH_MAIN);
