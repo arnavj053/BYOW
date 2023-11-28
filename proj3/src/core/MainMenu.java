@@ -133,8 +133,4 @@ public class MainMenu {
         }
     }
 }
-<<<<<<< HEAD
 
-
-=======
->>>>>>> eb9eaaa6062edaa7ea8262224350d99ead8b3eef

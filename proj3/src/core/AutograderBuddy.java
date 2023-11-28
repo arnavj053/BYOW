@@ -71,9 +71,4 @@ public class AutograderBuddy {
     public static boolean isBoundaryTile(TETile t) {
         return t.character() == Tileset.WALL.character();
     }
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> eb9eaaa6062edaa7ea8262224350d99ead8b3eef

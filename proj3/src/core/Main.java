@@ -14,6 +14,7 @@ public class Main {
     static String avatarName = null; // Load the avatar name at the start
     static StringBuilder actions = new StringBuilder(); // To store actions
     static boolean isReplay = false;
+    static boolean fileloaded = false;
 
 
     public static void main(String[] args) {
@@ -24,17 +25,18 @@ public class Main {
             int userSelection = menu.showMenu();
 
             if (userSelection == 1) { // New Game
-                actions.setLength(0); // Clear previous actions
-                long seed = menu.enterSeed();// New Game
+                long seed = menu.enterSeed();
                 avatarName = loadAvatarName();
                 if (avatarName == null) {  // Only ask for avatar name if not already set
                     avatarName = menu.avatarName();
                 }
                 saveAvatarName(avatarName); // Save or update the avatar name
                 World newWorld = new World(seed);
+                fileloaded = false;
                 runGameLoop(newWorld, avatarName);
             } else if (userSelection == 2) { // Load Game
                 World loadedWorld = loadGame();
+                fileloaded = true;
                 if (loadedWorld != null) {
                     runGameLoop(loadedWorld, loadAvatarName()); // Use the avatar name loaded at the start
                 }
@@ -43,11 +45,11 @@ public class Main {
                 saveAvatarName(avatarName); // Save the new avatar name
                 break;
             } if (userSelection == 4) { // Replay
-                actions.setLength(0); // Clear any current actions
-                long seed = loadSeed(); // Load the seed used for the new game
-                String replayActions = loadActions(); // Load all actions since the new game
-                isReplay = true;
-                replayActions(replayActions, seed); // Replay all actions
+                long seed = loadSeed();
+                String replayActions = loadActions();
+                isReplay = true; // Set the flag to true for replay
+                replayActions(replayActions, seed);
+                // Reset the flag after replay is done
             }
         }
     }
@@ -133,7 +135,6 @@ public class Main {
 
     public static void saveGame(World world) {
         world.saveGameState("gameState.txt");
-        saveActions(actions.toString());
     }
 
     public static World loadGame() {
@@ -162,19 +163,27 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        actions.setLength(0); // Clear the current actions
-        String loadedActions = loadActions();
-        if (loadedActions != null) {
-            actions.append(loadedActions); // Append the loaded actions
-        }
-        return null;
+        return null; // Return null if the file does not exist
     }
     private static void saveActions(String actions) {
-        try (FileWriter writer = new FileWriter("action.txt", false)) { // false to overwrite
-            writer.write(actions);
-        } catch (IOException e) {
-            System.err.println("Error saving avatar name.");
-            e.printStackTrace();
+        if (!fileloaded) {
+            try (FileWriter writer = new FileWriter("action.txt", false)) {// false to overwrite
+                writer.write(actions);
+            } catch (IOException e) {
+                System.err.println("Error saving avatar name.");
+                e.printStackTrace();
+            }
+        }
+        if (fileloaded) {
+            StringBuilder newactions = new StringBuilder();
+            newactions.append(loadActions());
+            newactions.append(actions);
+            try (FileWriter writer = new FileWriter("action.txt", false)) {// false to overwrite
+                writer.write(newactions.toString());
+            } catch (IOException e) {
+                System.err.println("Error saving avatar name.");
+                e.printStackTrace();
+            }
         }
     }
     private static String loadActions() {
@@ -193,28 +202,28 @@ public class Main {
         return actions.toString();
     }
     private static void replayActions(String actions, long seed) {
-        World world = loadGame();
-        if (world == null) {
-            world = new World(seed); // If no save, start a new game with the seed
-        }
         TERenderer ter = new TERenderer();
+        boolean replayDone = false;
+        World world = new World(seed);// Initialize with the same seed as the original game
+        if (avatarName != null) {
+            world.displayHUD(world, avatarName);
+        }
         ter.initialize(WIDTH, HEIGHT);
         // Simulate and render each action
         for (char action : actions.toCharArray()) {
-            handleMovement(world, action);
+            switch (action) {
+                case 'w': world.tryMove(0, 1); break;
+                case 'a': world.tryMove(-1, 0); break;
+                case 's': world.tryMove(0, -1); break;
+                case 'd': world.tryMove(1, 0); break;
+            }
             ter.renderFrame(world.getTiles());
-            StdDraw.show();
-            StdDraw.pause(200); // This is just for visualization, adjust as needed
+            StdDraw.pause(200);
         }
         runGameLoop(world, loadAvatarName());
         isReplay = false;
     }
-<<<<<<< HEAD
 }
 
 
 
-
-=======
-}
->>>>>>> eb9eaaa6062edaa7ea8262224350d99ead8b3eef
