@@ -23,25 +23,30 @@ public class AutograderBuddy {
         boolean isNewGame = false;
         StringBuilder seedBuilder = new StringBuilder();
 
+
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (c == 'n' && !isNewGame) {
                 isNewGame = true;
+                // Clear any previous game state and actions here if necessary
             } else if (isNewGame && Character.isDigit(c)) {
                 seedBuilder.append(c);
             } else if (isNewGame && c == 's') {
                 seed = Long.parseLong(seedBuilder.toString());
                 world = new World(seed);
-                world.initializeWorld(seed);
                 isNewGame = false;
             } else if (c == 'l' && !isNewGame) {
                 world = Main.loadGame();
-                if (world == null) {
-                    return null;
-                }
+                // Here you should also load any actions and apply them if necessary
+                // For example:
+                // String actions = loadActions();
+                // applyActions(world, actions);
             } else if (!isNewGame) {
                 if (c == ':' && i + 1 < input.length() && input.charAt(i + 1) == 'q') {
                     Main.saveGame(world);
+                    // It might be necessary to break here only if you are simulating
+                    // a single sequence of actions ending with a save and quit.
+                    // Otherwise, continue applying actions.
                     break;
                 } else {
                     world.simulateMovement(c);

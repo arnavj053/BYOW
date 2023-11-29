@@ -29,7 +29,7 @@ public class MainMenu {
 
             StdDraw.setFont(new Font("Times new Roman", Font.PLAIN, 25));
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 2.5, "New Game (N)");
-            StdDraw.text(WIDTH_MAIN/ 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
+            StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 3.5, "Load Game (L)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 5.5, "Quit (Q)");
             StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 10.5, "Create Avatar Name (C)");
 
@@ -57,6 +57,8 @@ public class MainMenu {
                             avatarName = avatarName();
                             Main.saveAvatarName(avatarName);
                             break; // Continue showing the menu
+                        default:
+                            break;
                     }
                 }
                 if ((gameStatus == 'Q' || gameStatus == 'q') && quitGameStart) {
@@ -108,7 +110,8 @@ public class MainMenu {
                     input += c;
                     StdDraw.clear(Color.BLACK);
                     StdDraw.setPenColor(Color.WHITE);
-                    StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0, "Enter Avatar Name (Press 1 to finish): " + input);
+                    StdDraw.text(WIDTH_MAIN / 2.0, HEIGHT_MAIN / 9.0,
+                            "Enter Avatar Name (Press 1 to finish): " + input);
                     StdDraw.show();
                 }
             }
